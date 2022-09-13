@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/jrma14/F1Difficulty#readme",
   "dependencies": {
-    "express": "^4.18.1",
+    "express": "^4.18.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.9",
