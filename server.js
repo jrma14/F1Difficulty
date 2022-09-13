@@ -36,7 +36,9 @@ passport.use(new GoogleStrategy({
 },
     function verify(accessToken, refreshToken, profile, cb) {//https://github.com/jaredhanson/passport-google-oauth2#configure-strategy
         let coll = client.db("users").collection("google")
+        debugger
         coll.findOne({id:profile.id}).then(res => {
+            debugger
             if(res !== null){
                 return cb(null,res)
             } else {
