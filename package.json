@@ -19,8 +19,10 @@
   },
   "homepage": "https://github.com/jrma14/F1Difficulty#readme",
   "dependencies": {
+    "@material-tailwind/html": "^1.2.1",
     "body-parser": "^1.20.0",
     "cookie-parser": "^1.4.6",
+    "cookie-session": "^2.0.0",
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "express-session": "^1.17.3",

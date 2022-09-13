@@ -10,14 +10,6 @@ dotenv.config();
 const uri = `mongodb+srv://${process.env.USER}:${process.env.PASS}@f1difficultycalculator.g24tehi.mongodb.net/?retryWrites=true&w=majority`
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-
-
-client.connect(err => {
-  const collection = client.db("users").collection("users");
-  // perform actions on the collection object
-  client.close();
-});
-
 app.use(require('serve-static')(__dirname + '/../../public'));
 app.use(require('cookie-parser')());
 app.use(require('body-parser').urlencoded({ extended: true }));
@@ -27,15 +19,32 @@ app.use(passport.session());
 
 app.use(express.static('public'))
 
+passport.serializeUser(function(user, done) {
+    done(null, user);
+  });
+  
+  passport.deserializeUser(function(user, done) {
+    done(null, user);
+  });
+
 passport.use(new GoogleStrategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: 'https://localhost:3000/oauth2/redirect/google',
+    callbackURL: 'http://localhost:3000/oauth2/redirect/google',
     scope: ['profile'],
     state: true
 },
     function verify(accessToken, refreshToken, profile, cb) {//https://github.com/jaredhanson/passport-google-oauth2#configure-strategy
-       
+        let coll = client.db("users").collection("google")
+        coll.findOne({id:profile.id}).then(res => {
+            if(res !== null){
+                return cb(null,res)
+            } else {
+                let user = {...profile}
+                coll.insertOne(user)
+                return cb(null, user)
+            }
+        }).catch(err => cb(err))
     }
 ));
 
@@ -47,7 +56,7 @@ app.get('/oauth2/redirect/google',
     res.redirect('/');
   });
 
-app.use(function (req, res) {
+app.use((req, res) => {
     console.log(req.url)
     console.log(req.method)
 })
