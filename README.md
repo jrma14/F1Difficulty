@@ -2,8 +2,6 @@ a Results functionality which shows all data associated with a logged in user (e
 a Form/Entry functionality which allows users to add, modify, and delete data items (must be all three!) associated with their user name / account.
 Use of at least five Express middleware packages. Explore! One of these five middleware can be a custom function that you write yourself; if you choose to do this, make sure to describe what this function is in your README.
 Persistent data storage in between server sessions using mongodb
-Use of a CSS framework or template. This should do the bulk of your styling/CSS for you and be appropriate to your application. For example, don't use NES.css (which is awesome!) unless you're creating a game or some type of retro 80s site.
-Your application is required to demonstrate the use of the following concepts:
 
 HTML:
 
@@ -11,12 +9,6 @@ HTML input tags and form fields of various flavors (<textarea>, <input>, checkbo
 HTML that can display all data for a particular authenticated user. Note that this is different from the last assignnment, which required the display of all data in memory on the server.
 Note that it might make sense to have two pages for this assignment, one that handles login / authentication, and one that contains the rest of your application. For example, when visiting the home page for the assignment, users could be presented with a login form. After submitting the login form, if the login is successful, they are taken to the main application. If they fail, they are sent back to the login to try again. For this assignment, it is acceptable to simply create new user accounts upon login if none exist, however, you must alert your users to this fact.
 
-CSS:
-
-CSS styling should primarily be provided by your chosen template/framework. Oftentimes a great deal of care has been put into designing CSS templates; don't override their stylesheets unless you are extremely confident in your graphic design capabilities. The idea is to use CSS templates that give you a professional looking design aesthetic without requiring you to be a graphic designer yourself.
-JavaScript:
-
-At minimum, a small amount of front-end JavaScript to get / fetch data from the server. See the previous assignment for reference.
 Node.js:
 
 A server using Express, at least five pieces of Express middleware, and a persistent database (mongodb).

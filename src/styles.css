@@ -1,3 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --bg-x: 0px;
+    --bg-y: 0px;
+}
+
+#bg {
+    transform: translate(var(--bg-x),var(--bg-y));
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    object-fit: none;
+    overflow: visible;
+}
+
+#bg img {
+    max-width: none;
+    filter: invert(100%);
+    z-index: -1;
+    position: absolute;
+    /* transform: translateY(-1240px); */
+    /* transform: translateX(-800px); */
+    /* transform: translate(-1754px,1240px); */
+}

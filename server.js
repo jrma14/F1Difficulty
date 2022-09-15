@@ -3,12 +3,14 @@ const express = require('express'),
     passport = require('passport'),
     dotenv = require('dotenv'),
     GoogleStrategy = require('passport-google-oauth20')
-const { MongoClient, ServerApiVersion } = require('mongodb')
+const { MongoClient, ServerApiVersion } = require('mongodb');
 
 dotenv.config();
 
 const uri = `mongodb+srv://${process.env.USER}:${process.env.PASS}@f1difficultycalculator.g24tehi.mongodb.net/?retryWrites=true&w=majority`
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+
+let user
 
 app.use(require('serve-static')(__dirname + '/../../public'));
 app.use(require('cookie-parser')());
@@ -19,13 +21,13 @@ app.use(passport.session());
 
 app.use(express.static('public'))
 
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
     done(null, user);
-  });
-  
-  passport.deserializeUser(function(user, done) {
+});
+
+passport.deserializeUser(function (user, done) {
     done(null, user);
-  });
+});
 
 passport.use(new GoogleStrategy({
     clientID: process.env.CLIENT_ID,
@@ -36,13 +38,12 @@ passport.use(new GoogleStrategy({
 },
     function verify(accessToken, refreshToken, profile, cb) {//https://github.com/jaredhanson/passport-google-oauth2#configure-strategy
         let coll = client.db("users").collection("google")
-        debugger
-        coll.findOne({id:profile.id}).then(res => {
-            debugger
-            if(res !== null){
-                return cb(null,res)
+        coll.findOne({ id: profile.id }).then(res => {
+            if (res !== null) {
+                user = res
+                return cb(null, res)
             } else {
-                let user = {...profile}
+                user = { ...profile }
                 coll.insertOne(user)
                 return cb(null, user)
             }
@@ -53,14 +54,38 @@ passport.use(new GoogleStrategy({
 app.get('/login/google', passport.authenticate('google'));
 
 app.get('/oauth2/redirect/google',
-  passport.authenticate('google', { failureRedirect: '/login', failureMessage: true }),
-  function(req, res) {
-    res.redirect('/');
-  });
+    passport.authenticate('google', { failureRedirect: '/login', failureMessage: true }),
+    function (req, res) {
+        debugger
+        res.auth = user.id
+        res.authType = "google"
+        res.redirect('/');
+    });
 
-app.use((req, res) => {
+
+app.use(checkAuth)
+
+function checkAuth(req, res, next) {
+    
+    const user = req.user
+    if(user){
+        const authType = "google"//req.body.authType
+        const validUser = client.db("users").collection(authType).findOne({id:user.id})
+        if (!validUser) res.status(401).send({ error: "Authentication Required" })
+        else {
+            next()
+        }
+    } else{
+        res.status(401).send({ error: "Authentication Required" })
+    }
+    
+}
+
+app.use((req, res, next) => {
+    debugger
     console.log(req.url)
     console.log(req.method)
+    next()
 })
 
 app.listen(process.env.PORT || 3000)
