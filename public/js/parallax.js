@@ -35,6 +35,6 @@ function parallax(e){
     document.documentElement.style.setProperty('--bg-x', transX + maxX + "px")
     document.documentElement.style.setProperty('--bg-y', transY + maxY + "px")
     // console.log("max", maxX, maxY)
-    console.log("trans:", transX, transY)
-    console.log("curr:",transX + offsetX,transY + offsetY)
+    // console.log("trans:", transX, transY)
+    // console.log("curr:",transX + offsetX,transY + offsetY)
 }

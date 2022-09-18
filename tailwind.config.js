@@ -6,7 +6,7 @@ const { urlencoded } = require('express');
 
 module.exports = withMT({
   mode:'jit',
-  content: ["./public/**/*.html"],
+  content: ["./public/**/*.html","./protected/**/*.html","./protected/**/*.ejs"],
   theme: {
     colors: {
       'base':'#5DD1F5',

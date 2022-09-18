@@ -18,12 +18,13 @@
     overflow: visible;
 }
 
-#bg img {
+#map {
     max-width: none;
     filter: invert(100%);
     z-index: -1;
     position: absolute;
-    /* transform: translateY(-1240px); */
-    /* transform: translateX(-800px); */
-    /* transform: translate(-1754px,1240px); */
+}
+
+#google:hover {
+    content:url('../img/btn_google_signin_dark_pressed_web.png')
 }

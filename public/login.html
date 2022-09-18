@@ -5,18 +5,39 @@
     <title>F1 Difficulty Calculator </title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="css/styles.css" />
-    <!-- <script src="./js/login.js"></script> -->
+    <link rel="prefetch" href="./img/btn_google_signin_dark_pressed_web.png" />
+    <script src="./js/login.js"></script>
 </head>
 
-<body class="bg-blue-gray-400">
-    <h1 class="text-black">
-        Login!
-    </h1>
-    <a href="/login/google">
-        <button id="submit" class="button button-light-blue">
-            Home
-        </button>
-    </a>
+<body class="bg-blue-gray-400 h-screen flex justify-center items-center">
+    <div class="bg-white border-grey rounded-lg border-[1px] w-[550px] h-[655px] flex flex-col items-center">
+        <div class="flex justify-center border-[1px] border-grey rounded-lg w-[80%] h-full bg-white mt-5 p-5">
+            <form action="/login/username" id="login" method="POST" class="flex flex-col w-[50%] justify-center">
+                <input id="username" type="text" placeholder="username" class="pl-1 mb-5 rounded-md bg-gray-300">
+                <input id="password" type="password" placeholder="password" class="pl-1 mt-5 rounded-md bg-gray-300">
+                <input type="submit" value="Submit" class="mt-5">
+            </form>
+        </div>
+        <div class="justify-self-end flex justify-center">
+            <a href="/login/google" class="m-5">
+                <div class="h-[50px] w-[208px]">
+                    <img src='./img/btn_google_signin_dark_normal_web.png' alt="google signin" id="google" class="h-[50px] w-[208px]" />
+                </div>
+            </a>
+            <a href="/login/github" class="m-5">
+                <div class="h-[50px] w-[208px] bg-white rounded-md border-grey border-[1px]">
+                    <div class="flex align-middle h-full">
+                        <div class="h-full flex flex-col justify-center ml-1">
+                            Sign In With Github
+                        </div>
+                        <img class="h-[36px] w-[36px] self-center ml-auto mr-1" src='./img/github.png' alt="github signin"
+                            id="github" />
+    
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
 </body>
 
 </html>

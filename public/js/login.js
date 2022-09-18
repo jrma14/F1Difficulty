@@ -1,9 +1,16 @@
 window.onload = (e) => {
-    let button = document.querySelector('#submit')
-    button.addEventListener("click",(e) => {
-        fetch("/login/google").then(res => {
-            debugger
-            console.log(res)
+    let form = document.querySelector("#login")
+    form.onsubmit = (e) => {
+        e.preventDefault()
+        let data = {
+            username: document.querySelector('#username').value,
+            password: document.querySelector('#password').value
+        }
+        fetch('/login/username', {  
+            method: 'post',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data),
         })
-    })
+        form.reset()
+    }
 }

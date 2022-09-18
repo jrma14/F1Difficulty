@@ -2,24 +2,42 @@ const express = require('express'),
     app = express(),
     passport = require('passport'),
     dotenv = require('dotenv'),
-    GoogleStrategy = require('passport-google-oauth20')
-const { MongoClient, ServerApiVersion } = require('mongodb');
-
-dotenv.config();
-
-const uri = `mongodb+srv://${process.env.USER}:${process.env.PASS}@f1difficultycalculator.g24tehi.mongodb.net/?retryWrites=true&w=majority`
+    GoogleStrategy = require('passport-google-oauth20'),
+    GitHubStrategy = require('passport-github2'),
+    LocalStrategy = require('passport-local'),
+    path = require('path'),
+    { MongoClient, ServerApiVersion } = require('mongodb'),
+    ejs = require('ejs')
+dotenv.config()
+const uri = `mongodb+srv://${process.env.USER}:${process.env.PASS}@f1difficultycalculator.g24tehi.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-let user
-
-app.use(require('serve-static')(__dirname + '/../../public'));
-app.use(require('cookie-parser')());
-app.use(require('body-parser').urlencoded({ extended: true }));
-app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
+app.use((req, res, next) => {
+    // console.log(req.url)
+    // console.log(req.method)
+    next()
+})
+// app.use(require('cookie-parser')());//might not be working because express-session automatically parses cookies
+app.use(require('body-parser').json());
+app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));//automatically parses cookies
+app.use(express.static(path.join(__dirname, 'public'), { index: false, extensions: ['html'] }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use((req, res, next) => {
+    // debugger
+    if (!req.url.includes('/login')) {
+        if (req.user) {
+            next()
+        } else {
+            // console.log('not logged in')
+            res.redirect('/login')
+        }
+    } else {
+        next()
+    }
+})
+app.use(express.static(path.join(__dirname, 'protected'), { index: false, extensions: ['html'] }));
 
-app.use(express.static('public'))
 
 passport.serializeUser(function (user, done) {
     done(null, user);
@@ -30,9 +48,9 @@ passport.deserializeUser(function (user, done) {
 });
 
 passport.use(new GoogleStrategy({
-    clientID: process.env.CLIENT_ID,
-    clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: 'http://localhost:3000/oauth2/redirect/google',
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: 'http://localhost:3000/login/auth/google/callback',
     scope: ['profile'],
     state: true
 },
@@ -51,41 +69,73 @@ passport.use(new GoogleStrategy({
     }
 ));
 
-app.get('/login/google', passport.authenticate('google'));
+passport.use(new GitHubStrategy({
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    callbackURL: "http://localhost:3000/login/auth/github/callback"
+},
+    function verify(accessToken, refreshToken, profile, cb) {//https://github.com/jaredhanson/passport-google-oauth2#configure-strategy
+        let coll = client.db("users").collection("github")
+        coll.findOne({ id: profile.id }).then(res => {
+            if (res !== null) {
+                user = res
+                return cb(null, res)
+            } else {
+                user = { ...profile }
+                coll.insertOne(user)
+                return cb(null, user)
+            }
+        }).catch(err => cb(err))
+    }
+));
 
-app.get('/oauth2/redirect/google',
-    passport.authenticate('google', { failureRedirect: '/login', failureMessage: true }),
+passport.use(new LocalStrategy(
+    function (username, password, done) {//must encrypt and decrypt
+        let coll = client.db("users").collection("custom")
+        coll.findOne({ username: username }, function (err, user) {
+            if (err) { return done(err); }
+            if (!user) { return done(null, false); }
+            if (!user.password === password) { return done(null, false); }
+            return done(null, user);
+        });
+    }))
+
+app.post('/login/username', passport.authenticate('local', { failureRedirect: '/login' }),
     function (req, res) {
-        debugger
-        res.auth = user.id
-        res.authType = "google"
         res.redirect('/');
     });
 
+app.get('/login/google', passport.authenticate('google'));
 
-app.use(checkAuth)
+app.get('/login/github', passport.authenticate('github'));
 
-function checkAuth(req, res, next) {
-    
-    const user = req.user
-    if(user){
-        const authType = "google"//req.body.authType
-        const validUser = client.db("users").collection(authType).findOne({id:user.id})
-        if (!validUser) res.status(401).send({ error: "Authentication Required" })
-        else {
-            next()
+app.get('/login/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/login', failureMessage: true }),
+    function (req, res) {
+        res.redirect('/')
+    });
+
+app.get('/login/auth/github/callback',
+    passport.authenticate('github', { failureRedirect: '/login' }),
+    function (req, res) {
+        res.redirect('/')
+    })
+
+app.get('/', (req, res) => {
+    ejs.renderFile('./protected/index.ejs', { loginText: req.user ? 'logout' : 'login', loginAction: req.user ? '/logout' : '/login' }, {}, (err, template) => {
+        if (err) {
+            throw err;
+        } else {
+            res.end(template)
         }
-    } else{
-        res.status(401).send({ error: "Authentication Required" })
-    }
-    
-}
+    })
+})
 
-app.use((req, res, next) => {
-    debugger
-    console.log(req.url)
-    console.log(req.method)
-    next()
+app.get('/logout', (req, res) => {
+    req.logout((err) => {
+        if (err) console.log
+        res.redirect('/');
+    });
 })
 
 app.listen(process.env.PORT || 3000)
