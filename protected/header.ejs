@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dracula">
+
+<head>
+    <title>F1 Difficulty Calculator </title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script src="/js/tabs.js"></script>
+</head>
+
+<body >
+    <div class="flex w-full h-[50px]">
+        <div class="flex tabs tab-lg w-full justify-center" id="tabs">
+            <a href="/list" class="tab tab-lifted border-accent text-accent" onclick="handleClick('List')">List</a> 
+            <a href="/map" class="tab tab-lifted border-accent text-accent tab-active" onclick="handleClick('Map')">Map</a> 
+          </div>
+        <a href='/logout' class="absolute top-1 right-1">
+            <button class="btn btn-accent bg-green mr-1"> logout </button>
+        </a>
+    </div>
+</body>
+
+</html>

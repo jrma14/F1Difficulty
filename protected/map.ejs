@@ -7,9 +7,15 @@
     <link rel="stylesheet" href="/css/styles.css" />
     <script src="/js/parallax.js"></script>
     <script src="/js/map.js"></script>
+    <script src="/js/tabs.js"></script>
 </head>
 
-<body class="bg-grey overflow-clip text-white flex justify-center items-center w-full h-screen" id="body">
+
+
+<body class="bg-grey overflow-clip w-full h-screen" id="body">
+    <header class="w-full absolute z-10">
+        <%- include('header'); %>
+    </header>
     <div id="bg">
         <img src="img/world-map-removebg.png" id="map" />
             <div id="miami"
