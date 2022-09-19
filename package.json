@@ -4,9 +4,10 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "nodemon": "nodemon server.js css",
+    "nodemon": "nodemon server.js",
     "css": "postcss --watch ./src/styles.css -o ./public/css/styles.css",
-    "start": "concurrently --kill-others \"npm run css\" \"npm run nodemon\" "
+    "startdev": "concurrently --kill-others \"npm run css\" \"npm run nodemon\" ",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
