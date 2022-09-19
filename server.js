@@ -23,8 +23,8 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 app.use((req, res, next) => {
     // if(req.url == "/"){
-        // console.log(req.method)
-        // console.log(req.url)
+    // console.log(req.method)
+    // console.log(req.url)
     //     console.log(req.user)
     // }
     next()
@@ -65,12 +65,14 @@ passport.use(new GoogleStrategy({
 },
     function verify(accessToken, refreshToken, profile, cb) {//https://github.com/jaredhanson/passport-google-oauth2#configure-strategy
         let coll = client.db("users").collection("google")
+        let prefs = client.db("data").collection("preferences")
         coll.findOne({ id: profile.id }).then(res => {
             if (res !== null) {
                 user = res
                 return cb(null, res)
             } else {
-                user = { ...profile }
+                defPref = { list: false, theme: 'light' }
+                user = { ...profile, preferences: defPref }
                 coll.insertOne(user)
                 return cb(null, user)
             }
@@ -90,7 +92,8 @@ passport.use(new GitHubStrategy({
                 user = res
                 return cb(null, res)
             } else {
-                user = { ...profile }
+                defPref = { list: false, theme: 'light' }
+                user = { ...profile, preferences: defPref }
                 coll.insertOne(user)
                 return cb(null, user)
             }
@@ -103,9 +106,9 @@ passport.use(new LocalStrategy(
         let coll = client.db("users").collection("custom")
         coll.findOne({ username: username }, function (err, user) {
             if (err) { return done(err); }
-            if (!user) { return done(null, false, {err: 'username', message: 'no user with that username'}); }
+            if (!user) { return done(null, false, { err: 'username', message: 'no user with that username' }); }
             let dec = AES.decrypt(user.password, process.env.AES)
-            if (dec.toString(CryptoJS.enc.Utf8) !== Base64.stringify(SHA256(password))) { return done(null, false, {err: 'password', message: 'incorrect password'}); }
+            if (dec.toString(CryptoJS.enc.Utf8) !== Base64.stringify(SHA256(password))) { return done(null, false, { err: 'password', message: 'incorrect password' }); }
             return done(null, user);
         });
     }))
@@ -148,7 +151,8 @@ passport.use('create', new LocalStrategy({
                     let enc = AES.encrypt(sha, process.env.AES).toString()
                     // console.log('sha:', sha)
                     // console.log('enc',AES.decrypt(enc,process.env.AES).toString(CryptoJS.enc.Utf8))
-                    let user = { username: req.body.username, password: enc }
+                    defPref = { list: false, theme: 'light' }
+                    let user = { username: req.body.username, password: enc, preferences: defPref }
                     coll.insertOne(user)
                     return done(null, user)
                 }
@@ -162,7 +166,7 @@ app.post('/create', function (req, res, next) {
         successRedirect: '/',
     }, function (err, user, info) {
         if (!user) {
-            ejs.renderFile('./public/create.ejs', { err: info.err, message: info.message }, {}, (err, template) => {
+            ejs.renderFile('./public/create.ejs', { theme: req.user ? req.user.preferences.theme : 'light', err: info.err, message: info.message }, {}, (err, template) => {
                 if (err) {
                     throw err;
                 } else {
@@ -194,24 +198,16 @@ app.get('/login/auth/github/callback',
     })
 
 app.get('/', (req, res, next) => {
-    let coll = client.db('data').collection('preferences')
-    coll.findOne({ userId: req.user._id }).then(pref => {
-        if (pref) {
-            if (pref.list) {
-                res.redirect('/list')
-            } else {
-                res.redirect('/map')
-            }
-        } else {
-            coll.insertOne({ userId: req.user._id, list: false })
-            res.redirect('/map')
-        }
-    })
+    if (req.user.preferences.list) {
+        res.redirect('/list')
+    } else {
+        res.redirect('/map')
+    }
 })
 
 
 app.get('/create', (req, res) => {
-    ejs.renderFile('./public/create.ejs', { err: 'none', message: 'none' }, {}, (err, template) => {
+    ejs.renderFile('./public/create.ejs', { theme: req.user ? req.user.preferences.theme : 'light', err: 'none', message: 'none' }, {}, (err, template) => {
         if (err) {
             throw err;
         } else {
@@ -222,10 +218,10 @@ app.get('/create', (req, res) => {
 
 app.get('/login', (req, res) => {
     let info = req.session.loginFailed
-    if(info && !info.err){
+    if (info && !info.err) {
         info.err = 'missing'
     }
-    ejs.renderFile('./public/login.ejs', info?info:{err:'none',message:'none'}, {}, (err, template) => {
+    ejs.renderFile('./public/login.ejs', info ? info : { err: 'none', message: 'none', theme: req.user ? req.user.preferences.theme : 'light' }, {}, (err, template) => {
         if (err) {
             throw err;
         } else {
@@ -242,7 +238,7 @@ app.get('/logout', (req, res) => {
 })
 
 app.get('/map', (req, res) => {
-    ejs.renderFile('./protected/map.ejs', {}, {}, (err, template) => {
+    ejs.renderFile('./protected/map.ejs', { theme: req.user.preferences.theme }, {}, (err, template) => {
         if (err) {
             throw err;
         } else {
@@ -252,12 +248,12 @@ app.get('/map', (req, res) => {
 })
 
 app.get('/list', (req, res) => {
-    let tracks = ['Bahrain', 'Saudi Arabia', 'Australia', 'Italy(Imola)','United States(Miami)','Spain','Monaco','Azerbaijan','Canada','Great Britain','Austria','France','Hungary','Belgium','Netherlands','Italy(Monza)','Singapore','Japan','United States(Austin)','Mexico','Brazil','Abu Dhabi']
+    let tracks = ['Bahrain', 'Saudi Arabia', 'Australia', 'Italy(Imola)', 'United States(Miami)', 'Spain', 'Monaco', 'Azerbaijan', 'Canada', 'Great Britain', 'Austria', 'France', 'Hungary', 'Belgium', 'Netherlands', 'Italy(Monza)', 'Singapore', 'Japan', 'United States(Austin)', 'Mexico', 'Brazil', 'Abu Dhabi']
     let flags = ['https://www.f1laps.com/static/icons/flags/BHR.736ec7e127a1.svg', 'https://www.f1laps.com/static/icons/flags/SAU.239857cafada.svg', 'https://www.f1laps.com/static/icons/flags/AUS.cab2eac60acd.svg', 'https://www.f1laps.com/static/icons/flags/ITA.612e617f5d72.svg', 'https://www.f1laps.com/static/icons/flags/USA.36ab476e5e55.svg', 'https://www.f1laps.com/static/icons/flags/ESP.36938bbe2779.svg', 'https://www.f1laps.com/static/icons/flags/MCO.6bb3a6ad42a9.svg', 'https://www.f1laps.com/static/icons/flags/AZE.aed905d7c8a1.svg', 'https://www.f1laps.com/static/icons/flags/CAN.ed3cd4b507f8.svg', 'https://www.f1laps.com/static/icons/flags/GBR.e5564902e264.svg', 'https://www.f1laps.com/static/icons/flags/AUT.7fc4e22077fa.svg', 'https://www.f1laps.com/static/icons/flags/FRA.968aaa24eeff.svg', 'https://www.f1laps.com/static/icons/flags/HUN.844eeb9e8fa1.svg', 'https://www.f1laps.com/static/icons/flags/BEL.49147ca6a068.svg', 'https://www.f1laps.com/static/icons/flags/NLD.f163721e679e.svg', 'https://www.f1laps.com/static/icons/flags/ITA.612e617f5d72.svg', 'https://www.f1laps.com/static/icons/flags/SGP.3d05a02d8a92.svg', 'https://www.f1laps.com/static/icons/flags/JPN.1f905d23af14.svg', 'https://www.f1laps.com/static/icons/flags/USA.36ab476e5e55.svg', 'https://www.f1laps.com/static/icons/flags/MEX.6ee1e6d4e6ac.svg', 'https://www.f1laps.com/static/icons/flags/BRA.a102e5631626.svg', 'https://www.f1laps.com/static/icons/flags/ARE.61f9f9f93387.svg', 'https://www.f1laps.com/static/icons/flags/PRT.70a47eede02a.svg', 'https://www.f1laps.com/static/icons/flags/CHN.7f8455b70734.svg']
     let times = []
     let difficulties = []
 
-    ejs.renderFile('./protected/list.ejs', {tracks:tracks, flags:flags, times:times, difficulties:difficulties}, {}, (err, template) => {
+    ejs.renderFile('./protected/list.ejs', { theme: req.user ? req.user.preferences.theme : 'light', tracks: tracks, flags: flags, times: times, difficulties: difficulties }, {}, (err, template) => {
         if (err) {
             throw err;
         } else {
@@ -267,7 +263,7 @@ app.get('/list', (req, res) => {
 })
 
 app.get('/calculator', (req, res) => {
-    ejs.renderFile('./protected/calculator.ejs', req.query, {}, (err, template) => {
+    ejs.renderFile('./protected/calculator.ejs', { ...req.query, theme: req.user ? req.user.preferences.theme : 'light' }, {}, (err, template) => {
         if (err) {
             throw err;
         } else {
@@ -278,13 +274,13 @@ app.get('/calculator', (req, res) => {
 
 app.get('/getdifficulty', (req, res) => {
     axios.get(`https://www.f1laps.com/ai-difficulty-calculator/f12022/bahrain/?laptime=${req.query.laptime}#difficultyInputResult`)
-    .then(res => {
-        let dom = new jsdom.JSDOM(res.data).window.document
-        let difficulty = dom.getElementsByClassName('text-indigo-700')[0].textContent
-        return difficulty
-    }).then(diff => {
-        res.send({difficulty: diff})
-    })
+        .then(res => {
+            let dom = new jsdom.JSDOM(res.data).window.document
+            let difficulty = dom.getElementsByClassName('text-indigo-700')[0].textContent
+            return difficulty
+        }).then(diff => {
+            res.json({ difficulty: diff })
+        })
 })
 
 app.listen(process.env.PORT || 3000)

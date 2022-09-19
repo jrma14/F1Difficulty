@@ -8,7 +8,12 @@ const submit = function (e) {
     e.preventDefault()
 
     const response = fetch(`/getdifficulty/?laptime=${document.getElementsByClassName('lapTimeField')[0].value}`)
-    .then(res => console.log(res.body))
+    .then(res => {
+        return res.json()
+    })
+    .then(json => {
+        console.log(json)
+    })
     let form = document.querySelector('form')
     form.reset()
     return false
