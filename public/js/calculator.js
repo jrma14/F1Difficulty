@@ -1,22 +1,33 @@
 window.onload = function () {
-    const button = document.querySelector('button')
-    button.onclick = submit
+    const buttons = document.querySelectorAll('button')
+    buttons[0].onclick = submit
+    buttons[1].onclick = clear
     initLapTimeField()
+}
+
+const clear = function (e) {
+    e.preventDefault()
+    fetch(`/removedifficulty/?track=${document.body.getAttribute('data-endpoint')}`)
+    .then(res => {
+        window.location.reload()
+    })
+    // let form = document.querySelector('form')
+    // form.reset()
 }
 
 const submit = function (e) {
     e.preventDefault()
-
-    const response = fetch(`/getdifficulty/?laptime=${document.getElementsByClassName('lapTimeField')[0].value}`)
+    let laptime = document.getElementsByClassName('lapTimeField')[0].value
+    fetch(`/getdifficulty/?laptime=${laptime}&track=${document.body.getAttribute('data-endpoint')}`)
     .then(res => {
         return res.json()
     })
     .then(json => {
         console.log(json)
+        window.location.reload()
     })
-    let form = document.querySelector('form')
-    form.reset()
-    return false
+    // let form = document.querySelector('form')
+    // form.reset()
 }
 
 function initLapTimeField(){//yoinked graciously from https://f1laps.com

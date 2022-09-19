@@ -10,13 +10,13 @@
 </head>
 
 <body class="bg-base-300 w-full h-screen" id="body">
-    <header class="w-full absolute z-10">
+    <header id="header" class="w-full absolute z-10">
         <%- include('header'); %>
     </header>
     <div class="w-full h-full flex items-center justify-center">
         <div class="w-4/5 grid grid-cols-2 grid-rows-11 gap-4">
            <% for(let i = 0; i < tracks.length; i++) {%>
-            <%- include('card',{name: tracks[i], flag:flags[i], time:times[tracks[i]], difficulty:difficulties[tracks[i]]}) %>
+            <%- include('card',{endpoint: endpoints[i],name: tracks[i], flag:flags[i], time:data[endpoints[i]]?.laptime, difficulty:data[endpoints[i]]?.difficulty}) %>
             <% }%>
         </div>
     </div>

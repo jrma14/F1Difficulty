@@ -8,7 +8,7 @@
     <script src="./js/calculator.js"></script>
 </head>
 
-<body class="bg-grey overflow-hidden text-white flex justify-center items-center w-full h-screen" id="body">
+<body class="bg-grey overflow-hidden text-white flex justify-center items-center w-full h-screen" id="body" data-endpoint=<%= endpoint %> >
    <p>
        <%= name %> 
    </p>
@@ -17,6 +17,12 @@
         <button class="btn mt-5">submit</button>
         <button class="btn mt-5">clear</button>
    </form>
+   <p>
+    <%= laptime %>
+   </p>
+   <p>
+    <%= difficulty %>
+   </p>
 </body>
 
 </html>
