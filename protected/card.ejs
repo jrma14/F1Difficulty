@@ -7,9 +7,26 @@
     <link rel="stylesheet" href="/css/styles.css" />
 </head>
 
-<body >
-    <div class="flex w-full h-[50px]">
-       
+<body>
+    <div id="card" name=<%=name%> class="flex w-full h-[100px] bg-neutral border-accent border-[1px] rounded-lg hover:border-accent-content">
+        <div class="flex w-full items-center">
+            <p>
+                <%= name %>
+            </p>
+            <p>
+                <% if (time) {%>
+                    Time:
+                    <%= time%>
+                    <% } %>
+            </p>
+            <p>
+                <% if (difficulty) {%>
+                    Difficulty:
+                    <%= difficulty%>
+                    <% } %>
+            </p>
+            <img class="h-auto max-h-[50%] justify-self-end" src=<%=flag%> alt='flag'/>
+        </div>
     </div>
 </body>
 

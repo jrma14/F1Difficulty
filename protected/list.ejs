@@ -5,7 +5,8 @@
     <title>F1 Difficulty Calculator </title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="css/styles.css" />
-    <script src="/js/tabs.js"></script>
+    <script src="/js/list.js"></script>
+
 </head>
 
 <body class="bg-base-300 w-full h-screen" id="body">
@@ -14,15 +15,9 @@
     </header>
     <div class="w-full h-full flex items-center justify-center">
         <div class="w-4/5 grid grid-cols-2 grid-rows-11 gap-4">
-            <div class="text-center bg-primary">
-                1
-            </div>
-            <div class="text-center bg-primary">
-                2
-            </div>
-            <div class="text-center bg-primary">
-                3
-            </div>
+           <% for(let i = 0; i < tracks.length; i++) {%>
+            <%- include('card',{name: tracks[i], flag:flags[i], time:times[tracks[i]], difficulty:difficulties[tracks[i]]}) %>
+            <% }%>
         </div>
     </div>
 </body>

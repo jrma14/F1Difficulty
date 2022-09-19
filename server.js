@@ -1,8 +1,9 @@
-const { none } = require('@material-tailwind/html/theme/base/shadows');
 const { SHA256, AES } = require('crypto-js');
 const Base64 = require('crypto-js/enc-base64')
 const { send } = require('process');
 const CryptoJS = require('crypto-js')
+const axios = require('axios')
+const jsdom = require('jsdom')
 
 const express = require('express'),
     app = express(),
@@ -251,12 +252,38 @@ app.get('/map', (req, res) => {
 })
 
 app.get('/list', (req, res) => {
-    ejs.renderFile('./protected/list.ejs', {}, {}, (err, template) => {
+    let tracks = ['Bahrain', 'Saudi Arabia', 'Australia', 'Italy(Imola)','United States(Miami)','Spain','Monaco','Azerbaijan','Canada','Great Britain','Austria','France','Hungary','Belgium','Netherlands','Italy(Monza)','Singapore','Japan','United States(Austin)','Mexico','Brazil','Abu Dhabi']
+    let flags = ['https://www.f1laps.com/static/icons/flags/BHR.736ec7e127a1.svg', 'https://www.f1laps.com/static/icons/flags/SAU.239857cafada.svg', 'https://www.f1laps.com/static/icons/flags/AUS.cab2eac60acd.svg', 'https://www.f1laps.com/static/icons/flags/ITA.612e617f5d72.svg', 'https://www.f1laps.com/static/icons/flags/USA.36ab476e5e55.svg', 'https://www.f1laps.com/static/icons/flags/ESP.36938bbe2779.svg', 'https://www.f1laps.com/static/icons/flags/MCO.6bb3a6ad42a9.svg', 'https://www.f1laps.com/static/icons/flags/AZE.aed905d7c8a1.svg', 'https://www.f1laps.com/static/icons/flags/CAN.ed3cd4b507f8.svg', 'https://www.f1laps.com/static/icons/flags/GBR.e5564902e264.svg', 'https://www.f1laps.com/static/icons/flags/AUT.7fc4e22077fa.svg', 'https://www.f1laps.com/static/icons/flags/FRA.968aaa24eeff.svg', 'https://www.f1laps.com/static/icons/flags/HUN.844eeb9e8fa1.svg', 'https://www.f1laps.com/static/icons/flags/BEL.49147ca6a068.svg', 'https://www.f1laps.com/static/icons/flags/NLD.f163721e679e.svg', 'https://www.f1laps.com/static/icons/flags/ITA.612e617f5d72.svg', 'https://www.f1laps.com/static/icons/flags/SGP.3d05a02d8a92.svg', 'https://www.f1laps.com/static/icons/flags/JPN.1f905d23af14.svg', 'https://www.f1laps.com/static/icons/flags/USA.36ab476e5e55.svg', 'https://www.f1laps.com/static/icons/flags/MEX.6ee1e6d4e6ac.svg', 'https://www.f1laps.com/static/icons/flags/BRA.a102e5631626.svg', 'https://www.f1laps.com/static/icons/flags/ARE.61f9f9f93387.svg', 'https://www.f1laps.com/static/icons/flags/PRT.70a47eede02a.svg', 'https://www.f1laps.com/static/icons/flags/CHN.7f8455b70734.svg']
+    let times = []
+    let difficulties = []
+
+    ejs.renderFile('./protected/list.ejs', {tracks:tracks, flags:flags, times:times, difficulties:difficulties}, {}, (err, template) => {
         if (err) {
             throw err;
         } else {
             res.end(template)
         }
+    })
+})
+
+app.get('/calculator', (req, res) => {
+    ejs.renderFile('./protected/calculator.ejs', req.query, {}, (err, template) => {
+        if (err) {
+            throw err;
+        } else {
+            res.end(template)
+        }
+    })
+})
+
+app.get('/getdifficulty', (req, res) => {
+    axios.get(`https://www.f1laps.com/ai-difficulty-calculator/f12022/bahrain/?laptime=${req.query.laptime}#difficultyInputResult`)
+    .then(res => {
+        let dom = new jsdom.JSDOM(res.data).window.document
+        let difficulty = dom.getElementsByClassName('text-indigo-700')[0].textContent
+        return difficulty
+    }).then(diff => {
+        res.send({difficulty: diff})
     })
 })
 
