@@ -9,11 +9,17 @@
 
 </head>
 
-<body class="bg-base-300 w-full h-screen" id="body">
-    <header id="header" class="w-full absolute z-10">
-        <%- include('header'); %>
+<body class="bg-base-300 w-full h-full" id="body">
+    <header id="header" class="w-full">
+        <%- include('header', {pfp:pfp}); %>
     </header>
-    <div class="w-full h-full flex items-center justify-center">
+    <div class="h-[144px] flex flex-col justify-end items-center text-3xl">
+        <h1 class="font-bold text-3xl">
+            Average Difficulty
+        </h1>
+        <%= avg %> 
+    </div>
+    <div class="w-full h-full flex items-center justify-center mt-5">
         <div class="w-4/5 grid grid-cols-2 grid-rows-11 gap-4">
            <% for(let i = 0; i < tracks.length; i++) {%>
             <%- include('card',{endpoint: endpoints[i],name: tracks[i], flag:flags[i], time:data[endpoints[i]]?.laptime, difficulty:data[endpoints[i]]?.difficulty}) %>

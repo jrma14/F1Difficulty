@@ -8,24 +8,26 @@
 </head>
 
 <body>
-    <div data-endpoint=<%= endpoint %> id="card" name=<%=name%> class="flex w-full h-[100px] bg-neutral border-accent border-[1px] rounded-lg hover:border-accent-content">
+    <div data-endpoint=<%= endpoint %> id="card" name=<%=name%> class="cursor-default flex w-full h-[100px] bg-neutral border-accent border-[1px] rounded-lg hover:border-accent-content">
         <div class="flex w-full items-center">
-            <p>
+            <p class="ml-1 w-12">
                 <%= name %>
             </p>
-            <p>
-                <% if (time) {%>
-                    Time:
-                    <%= time%>
-                    <% } %>
-            </p>
-            <p>
-                <% if (difficulty) {%>
-                    Difficulty:
-                    <%= difficulty%>
-                    <% } %>
-            </p>
-            <img class="h-auto max-h-[50%] justify-self-end" src=<%=flag%> alt='flag'/>
+            <div class="flex w-full justify-center">
+                <p class="mr-5">
+                    <% if (time) {%>
+                        Time:
+                        <%= time%>
+                        <% } %>
+                </p>
+                <p class="ml-5">
+                    <% if (difficulty) {%>
+                        Difficulty:
+                        <%= difficulty%>
+                        <% } %>
+                </p>
+            </div>
+            <img class="h-auto max-h-[50%] mr-1 ml-auto" src=<%=flag%> alt='flag'/>
         </div>
     </div>
 </body>

@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-theme=<%=theme%>>
+<html lang="en" data-theme=<%= theme %> >
+
 
 <head>
     <title>F1 Difficulty Calculator </title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="css/styles.css" />
+    <link rel="icon" href="img/favicon.ico">
 </head>
 
 <body class="bg-base-300 h-screen flex justify-center items-center">
@@ -13,13 +15,16 @@
             <form action="/login/username" id="login" method="POST" class="flex flex-col w-[50%] justify-center">
                 <input name="username" id="username" type="text" placeholder="username" class="mt-auto input input-bordered input-accent pl-1 mb-5 rounded-md">
                 <% if (err === 'username') {%>
-                    <p><%= message %></p>
+                    <p class="text-error"><%= message %></p>
                     <%}%>
                 <input name="password" id="password" type="password" placeholder="password" class="input input-bordered input-accent pl-1 mt-5 rounded-md bg-gray-300">
                 <% if (err === 'password') {%>
-                    <p><%= message %></p>
+                    <p class="text-error"><%= message %></p>
                     <%}%>
                 <input type="submit" value="Submit" class="input btn btn-accent mt-5">
+                <% if (err === 'missing') {%>
+                    <p class="text-error"><%= message %></p>
+                    <%}%>
                 <a href="/create" class="link link-secondary ml-auto mr-auto mt-auto mb-0">Create an account</a>
             </form>
         </div>

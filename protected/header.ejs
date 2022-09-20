@@ -1,21 +1,23 @@
 <!DOCTYPE html>
-<html lang="en" data-theme=<%=theme%>>
-
-<head>
-    <title>F1 Difficulty Calculator </title>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="/css/styles.css" />
-</head>
-
-<body >
-    <div class="flex w-full h-[50px]">
+<body>
+    <div class="absolute flex w-full h-[65px]">
         <div class="flex tabs tab-lg w-full justify-center" id="tabs">
-            <a name="list" href="/list" class="tab tab-lifted border-accent text-accent">List</a> 
-            <a name="map" href="/map" class="tab tab-lifted border-accent text-accent tab-active">Map</a> 
-          </div>
-        <a href='/logout' class="absolute top-1 right-1">
-            <button class="btn btn-accent bg-green mr-1"> logout </button>
-        </a>
+            <a name="list" href="/list" class="tab tab-bordered border-primary text-primary">List</a>
+            <a name="map" href="/map" class="tab tab-bordered border-primary text-primary tab-active">Map</a>
+        </div>
+        <div class="absolute flex items-center top-1 right-1">
+            <% if (pfp) {%> 
+            <img class="rounded-full h-12 mt-1 mr-3" src = <%= pfp %> /> 
+            <% } %> 
+            <a href="/settings" class="mr-3 mt-1 h-12">
+                <button class="btn btn-accent">
+                    <img class="h-12" src="img/account-cog.svg" />
+                </button>
+            </a>
+            <a href='/logout' class="mt-1">
+                <button class="btn btn-accent bg-green mr-1 h-12"> logout </button>
+            </a>
+        </div>
     </div>
 </body>
 

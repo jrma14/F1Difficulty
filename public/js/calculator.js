@@ -1,6 +1,6 @@
 window.onload = function () {
     const buttons = document.querySelectorAll('button')
-    buttons[0].onclick = submit
+    buttons[2].onclick = submit
     buttons[1].onclick = clear
     initLapTimeField()
 }
@@ -18,12 +18,13 @@ const clear = function (e) {
 const submit = function (e) {
     e.preventDefault()
     let laptime = document.getElementsByClassName('lapTimeField')[0].value
+    if (laptime.length !== 8) return
     fetch(`/getdifficulty/?laptime=${laptime}&track=${document.body.getAttribute('data-endpoint')}`)
     .then(res => {
         return res.json()
     })
     .then(json => {
-        console.log(json)
+        // console.log(json)
         window.location.reload()
     })
     // let form = document.querySelector('form')

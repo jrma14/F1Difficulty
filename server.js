@@ -5,6 +5,7 @@ const CryptoJS = require('crypto-js')
 const axios = require('axios')
 const jsdom = require('jsdom');
 const { data } = require('autoprefixer');
+const favicon = require('serve-favicon');
 
 const express = require('express'),
     app = express(),
@@ -31,6 +32,7 @@ app.use((req, res, next) => {
     next()
 })
 // app.use(require('cookie-parser')());//might not be working because express-session automatically parses cookies
+app.use(favicon(path.join(__dirname, 'public', 'img', 'favicon.ico')))// TODO: not working?
 app.use(require('body-parser').urlencoded({ extended: true }));
 app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));//automatically parses cookies
 app.use(express.static(path.join(__dirname, 'public'), { index: false, extensions: ['html'] }));
@@ -77,7 +79,7 @@ passport.use(new GoogleStrategy({
                 return cb(null, res)
             } else {
                 defPref = { list: false, theme: 'light' }
-                user = { ...profile, preferences: defPref }
+                user = { ...profile, preferences: defPref, type: 'google' }
                 coll.insertOne(user)
                 return cb(null, user)
             }
@@ -98,7 +100,7 @@ passport.use(new GitHubStrategy({
                 return cb(null, res)
             } else {
                 defPref = { list: false, theme: 'light' }
-                user = { ...profile, preferences: defPref }
+                user = { ...profile, preferences: defPref, type: 'github' }
                 coll.insertOne(user)
                 return cb(null, user)
             }
@@ -157,7 +159,7 @@ passport.use('create', new LocalStrategy({
                     // console.log('sha:', sha)
                     // console.log('enc',AES.decrypt(enc,process.env.AES).toString(CryptoJS.enc.Utf8))
                     defPref = { list: false, theme: 'light' }
-                    let user = { username: req.body.username, password: enc, preferences: defPref }
+                    let user = { username: req.body.username, password: enc, preferences: defPref, type: 'custom' }
                     coll.insertOne(user)
                     return done(null, user)
                 }
@@ -226,7 +228,7 @@ app.get('/login', (req, res) => {
     if (info && !info.err) {
         info.err = 'missing'
     }
-    ejs.renderFile('./public/login.ejs', info ? info : { err: 'none', message: 'none', theme: req.user ? req.user.preferences.theme : 'light' }, {}, (err, template) => {
+    ejs.renderFile('./public/login.ejs',  {err: info?.err, message: info?.message, theme: req.user ? req.user.preferences.theme : 'light' }, {}, (err, template) => {
         if (err) {
             throw err;
         } else {
@@ -242,8 +244,51 @@ app.get('/logout', (req, res) => {
     });
 })
 
-app.get('/map', (req, res) => {
-    ejs.renderFile('./protected/map.ejs', { theme: req.user.preferences.theme }, {}, (err, template) => {
+app.get('/changetheme', (req, res) => {
+    users = client.db('users').collection(req.user.type)
+    req.user.preferences.theme = req.query.theme
+    let {_id, ...rest} = req.user 
+    if(req.user.type === 'custom'){
+        users.updateOne({username: req.user.username}, {$set: rest})
+    } else {
+        users.updateOne({id: req.user.id}, {$set: rest})
+    }
+    res.end()
+})
+
+app.get('/settings', (req, res) => {
+    ejs.renderFile('./protected/settings.ejs', { theme: req.user ? req.user.preferences.theme : 'light'}, {}, (err, template) => {
+        if (err) {
+            throw err;
+        } else {
+            res.end(template)
+        }
+    })
+})
+
+app.get('/map', async (req, res) => {
+    users = client.db('users').collection(req.user.type)
+    req.user.preferences.list = false
+    let {_id, ...rest} = req.user 
+    if(req.user.type === 'custom'){
+        users.updateOne({username: req.user.username}, {$set: rest})
+    } else {
+        users.updateOne({id: req.user.id}, {$set: rest})
+    }
+
+
+    let tracks = ['Bahrain', 'Saudi Arabia', 'Australia', 'Italy(Imola)', 'United States(Miami)', 'Spain', 'Monaco', 'Azerbaijan', 'Canada', 'Great Britain', 'Austria', 'France', 'Hungary', 'Belgium', 'Netherlands', 'Italy(Monza)', 'Singapore', 'Japan', 'United States(Austin)', 'Mexico', 'Brazil', 'Abu Dhabi']
+    let flags = ['https://www.f1laps.com/static/icons/flags/BHR.736ec7e127a1.svg', 'https://www.f1laps.com/static/icons/flags/SAU.239857cafada.svg', 'https://www.f1laps.com/static/icons/flags/AUS.cab2eac60acd.svg', 'https://www.f1laps.com/static/icons/flags/ITA.612e617f5d72.svg', 'https://www.f1laps.com/static/icons/flags/USA.36ab476e5e55.svg', 'https://www.f1laps.com/static/icons/flags/ESP.36938bbe2779.svg', 'https://www.f1laps.com/static/icons/flags/MCO.6bb3a6ad42a9.svg', 'https://www.f1laps.com/static/icons/flags/AZE.aed905d7c8a1.svg', 'https://www.f1laps.com/static/icons/flags/CAN.ed3cd4b507f8.svg', 'https://www.f1laps.com/static/icons/flags/GBR.e5564902e264.svg', 'https://www.f1laps.com/static/icons/flags/AUT.7fc4e22077fa.svg', 'https://www.f1laps.com/static/icons/flags/FRA.968aaa24eeff.svg', 'https://www.f1laps.com/static/icons/flags/HUN.844eeb9e8fa1.svg', 'https://www.f1laps.com/static/icons/flags/BEL.49147ca6a068.svg', 'https://www.f1laps.com/static/icons/flags/NLD.f163721e679e.svg', 'https://www.f1laps.com/static/icons/flags/ITA.612e617f5d72.svg', 'https://www.f1laps.com/static/icons/flags/SGP.3d05a02d8a92.svg', 'https://www.f1laps.com/static/icons/flags/JPN.1f905d23af14.svg', 'https://www.f1laps.com/static/icons/flags/USA.36ab476e5e55.svg', 'https://www.f1laps.com/static/icons/flags/MEX.6ee1e6d4e6ac.svg', 'https://www.f1laps.com/static/icons/flags/BRA.a102e5631626.svg', 'https://www.f1laps.com/static/icons/flags/ARE.61f9f9f93387.svg', 'https://www.f1laps.com/static/icons/flags/PRT.70a47eede02a.svg', 'https://www.f1laps.com/static/icons/flags/CHN.7f8455b70734.svg']
+    let endpoints = ['bahrain', 'saudi_arabia', 'australia', 'imola', 'miami', 'spain', 'monaco', 'azerbaijan', 'canada', 'silverstone', 'austria', 'france', 'hungary', 'spa', 'netherlands', 'monza', 'singapore', 'japan', 'usa', 'mexico', 'brazil', 'abudhabi']
+    let coords = [[2140,870],[2065,905],[3060,1575],[1775,675],[850,850],[1605,705],[1690,665],[2100,815],[910,635],[1635,570],[1790,610],[1660,630],[1785,590],[1830,620],[1690,560],[1800,700],[2680,1030],[2990,745],[685,800],[600,875],[1115,1240],[2170,890]]
+    let data = {}    
+    debugger
+    let coll = client.db('data').collection('laptimes')
+    let result = await coll.find({userId: req.user.id}).toArray()
+    result.forEach(e => {
+        data[e.track] = e
+    })
+    ejs.renderFile('./protected/map.ejs', {pfp:req.user.photos?req.user.photos[0]?.value:'', coords: coords, endpoints: endpoints, theme: req.user ? req.user.preferences.theme : 'light', tracks: tracks, flags: flags, data: data }, {}, (err, template) => {
         if (err) {
             throw err;
         } else {
@@ -253,6 +298,16 @@ app.get('/map', (req, res) => {
 })
 
 app.get('/list', async (req, res) => {
+    users = client.db('users').collection(req.user.type)
+    req.user.preferences.list = true
+    let {_id, ...rest} = req.user 
+    if(req.user.type === 'custom'){
+        users.updateOne({username: req.user.username}, {$set: rest})
+    } else {
+        users.updateOne({id: req.user.id}, {$set: rest})
+    }
+
+    req.user.preferences.list = true
     let tracks = ['Bahrain', 'Saudi Arabia', 'Australia', 'Italy(Imola)', 'United States(Miami)', 'Spain', 'Monaco', 'Azerbaijan', 'Canada', 'Great Britain', 'Austria', 'France', 'Hungary', 'Belgium', 'Netherlands', 'Italy(Monza)', 'Singapore', 'Japan', 'United States(Austin)', 'Mexico', 'Brazil', 'Abu Dhabi']
     let flags = ['https://www.f1laps.com/static/icons/flags/BHR.736ec7e127a1.svg', 'https://www.f1laps.com/static/icons/flags/SAU.239857cafada.svg', 'https://www.f1laps.com/static/icons/flags/AUS.cab2eac60acd.svg', 'https://www.f1laps.com/static/icons/flags/ITA.612e617f5d72.svg', 'https://www.f1laps.com/static/icons/flags/USA.36ab476e5e55.svg', 'https://www.f1laps.com/static/icons/flags/ESP.36938bbe2779.svg', 'https://www.f1laps.com/static/icons/flags/MCO.6bb3a6ad42a9.svg', 'https://www.f1laps.com/static/icons/flags/AZE.aed905d7c8a1.svg', 'https://www.f1laps.com/static/icons/flags/CAN.ed3cd4b507f8.svg', 'https://www.f1laps.com/static/icons/flags/GBR.e5564902e264.svg', 'https://www.f1laps.com/static/icons/flags/AUT.7fc4e22077fa.svg', 'https://www.f1laps.com/static/icons/flags/FRA.968aaa24eeff.svg', 'https://www.f1laps.com/static/icons/flags/HUN.844eeb9e8fa1.svg', 'https://www.f1laps.com/static/icons/flags/BEL.49147ca6a068.svg', 'https://www.f1laps.com/static/icons/flags/NLD.f163721e679e.svg', 'https://www.f1laps.com/static/icons/flags/ITA.612e617f5d72.svg', 'https://www.f1laps.com/static/icons/flags/SGP.3d05a02d8a92.svg', 'https://www.f1laps.com/static/icons/flags/JPN.1f905d23af14.svg', 'https://www.f1laps.com/static/icons/flags/USA.36ab476e5e55.svg', 'https://www.f1laps.com/static/icons/flags/MEX.6ee1e6d4e6ac.svg', 'https://www.f1laps.com/static/icons/flags/BRA.a102e5631626.svg', 'https://www.f1laps.com/static/icons/flags/ARE.61f9f9f93387.svg', 'https://www.f1laps.com/static/icons/flags/PRT.70a47eede02a.svg', 'https://www.f1laps.com/static/icons/flags/CHN.7f8455b70734.svg']
     let endpoints = ['bahrain', 'saudi_arabia', 'australia', 'imola', 'miami', 'spain', 'monaco', 'azerbaijan', 'canada', 'silverstone', 'austria', 'france', 'hungary', 'spa', 'netherlands', 'monza', 'singapore', 'japan', 'usa', 'mexico', 'brazil', 'abudhabi']
@@ -260,11 +315,14 @@ app.get('/list', async (req, res) => {
     debugger
     let coll = client.db('data').collection('laptimes')
     let result = await coll.find({userId: req.user.id}).toArray()
+    let sum = 0
     result.forEach(e => {
+        sum += parseInt(e.difficulty)
         data[e.track] = e
     })
-    console.log(data)
-    ejs.renderFile('./protected/list.ejs', { endpoints: endpoints, theme: req.user ? req.user.preferences.theme : 'light', tracks: tracks, flags: flags, data: data }, {}, (err, template) => {
+    let avg = sum/result.length
+    // console.log(data)
+    ejs.renderFile('./protected/list.ejs', {pfp:req.user.photos?req.user.photos[0]?.value:'', avg: avg,endpoints: endpoints, theme: req.user ? req.user.preferences.theme : 'light', tracks: tracks, flags: flags, data: data }, {}, (err, template) => {
         if (err) {
             throw err;
         } else {
