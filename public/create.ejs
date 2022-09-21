@@ -11,7 +11,7 @@
 
 </head>
 
-<body class="bg-base-300 h-screen flex justify-center items-center">
+<body class="bg-base-300 text-base-content h-screen flex justify-center items-center">
     <div class="bg-base-100 border-neutral rounded-lg border-[1px] w-[550px] h-[655px] flex flex-col items-center">
         <div class="flex justify-center border-[1px] border-neutral rounded-lg w-[80%] h-full bg-base-100 mt-5 p-5 mb-5">
             <form action="/create" id="create" method="POST" class="flex flex-col w-[50%] justify-center">
@@ -24,7 +24,7 @@
                     <p class="text-error"><%= message %></p>
                     <%}%>
                 <input name="confirmpassword" id="password" type="password" placeholder="confirm password" class="pl-1 mt-5 mb-5 rounded-md input input-accent">
-                <input type="submit" value="Submit" class="btn btn-accent mt-5">
+                <input type="submit" value="Submit" class="btn btn-primary mt-5">
                 <a href="/login/create"></a>
             </form>
         </div>

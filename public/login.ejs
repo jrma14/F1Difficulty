@@ -9,7 +9,10 @@
     <link rel="icon" href="img/favicon.ico">
 </head>
 
-<body class="bg-base-300 h-screen flex justify-center items-center">
+<body class="bg-base-300 text-base-content h-screen flex flex-col justify-center items-center">
+    <div class="text-base-content text-3xl mb-10 font-bold">
+        F1 Difficulty Calculator
+    </div>
     <div class="bg-base-100 border-neutral rounded-lg border-[1px] w-[550px] h-[655px] flex flex-col items-center">
         <div class="flex justify-center border-[1px] border-neutral rounded-lg w-[456px] h-full bg-base-100 mt-5 p-5">
             <form action="/login/username" id="login" method="POST" class="flex flex-col w-[50%] justify-center">
@@ -21,7 +24,7 @@
                 <% if (err === 'password') {%>
                     <p class="text-error"><%= message %></p>
                     <%}%>
-                <input type="submit" value="Submit" class="input btn btn-accent mt-5">
+                <input type="submit" value="Submit" class="input btn btn-primary mt-5">
                 <% if (err === 'missing') {%>
                     <p class="text-error"><%= message %></p>
                     <%}%>
@@ -35,7 +38,7 @@
                 </div>
             </a>
             <a href="/login/github" class="m-5">
-                <div class="text- h-[50px] w-[208px] bg-base-100 rounded-md border-neutral border-[1px]">
+                <div class="h-[50px] w-[208px] bg-base-100 rounded-md border-neutral border-[1px]">
                     <div class="flex align-middle h-full">
                         <div class="h-full flex flex-col justify-center ml-1">
                             Sign In With Github
