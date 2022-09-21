@@ -1,7 +1,7 @@
 module.exports =
 {
   mode: 'jit',
-  content: ["./public/**/*.html", "./protected/**/*.html", "./protected/**/*.ejs", './public/*.ejs'],
+  content: ["./public/**/*.html", "./protected/**/*.html", "./protected/**/*.ejs", './public/*.ejs','*.js'],
   theme: {
     colors: {
       // 'base': '#5DD1F5',

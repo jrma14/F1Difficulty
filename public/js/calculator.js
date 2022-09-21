@@ -8,11 +8,14 @@ window.onload = function () {
 const clear = function (e) {
     e.preventDefault()
     fetch(`/removedifficulty/?track=${document.body.getAttribute('data-endpoint')}`)
-    .then(res => {
-        window.location.reload()
-    })
-    // let form = document.querySelector('form')
-    // form.reset()
+        .then(res => {
+            let time = document.getElementById('laptime')
+            let diff = document.getElementById('difficulty')
+            time.innerText = 'no laptime'
+            diff.innerText = 'no difficulty'
+        })
+    let form = document.querySelector('form')
+    form.reset()
 }
 
 const submit = function (e) {
@@ -20,18 +23,20 @@ const submit = function (e) {
     let laptime = document.getElementsByClassName('lapTimeField')[0].value
     if (laptime.length !== 8) return
     fetch(`/getdifficulty/?laptime=${laptime}&track=${document.body.getAttribute('data-endpoint')}`)
-    .then(res => {
-        return res.json()
-    })
-    .then(json => {
-        // console.log(json)
-        window.location.reload()
-    })
-    // let form = document.querySelector('form')
-    // form.reset()
+        .then(res => {
+            return res.json()
+        })
+        .then(json => {
+            let time = document.getElementById('laptime')
+            let diff = document.getElementById('difficulty')
+            time.textContent = json.laptime
+            diff.textContent = 'Difficulty: ' + json.difficulty
+        })
+    let form = document.querySelector('form')
+    form.reset()
 }
 
-function initLapTimeField(){//yoinked graciously from https://f1laps.com
+function initLapTimeField() {//yoinked graciously from https://f1laps.com
     var lapTimeField = document.getElementsByClassName('lapTimeField');
     for (var i = 0; i < lapTimeField.length; i++) {
         lapTimeField[i].addEventListener('input', function (e) {

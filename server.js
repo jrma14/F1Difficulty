@@ -6,6 +6,7 @@ const axios = require('axios')
 const jsdom = require('jsdom');
 const { data } = require('autoprefixer');
 const favicon = require('serve-favicon');
+const { query } = require('express');
 
 const express = require('express'),
     app = express(),
@@ -47,7 +48,7 @@ app.use((req, res, next) => {
             res.redirect('/login')
         }
     } else {
-        if(req.user){
+        if (req.user) {
             res.redirect('/')
         } else {
             next()
@@ -182,7 +183,7 @@ app.post('/create', function (req, res, next) {
                 }
             })
         } else {
-            console.log(user)
+            // console.log(user)
             res.redirect('/')
         }
     }
@@ -229,7 +230,7 @@ app.get('/login', (req, res) => {
     if (info && !info.err) {
         info.err = 'missing'
     }
-    ejs.renderFile('./public/login.ejs',  {err: info?.err, message: info?.message, theme: req.user ? req.user.preferences.theme : defaultTheme }, {}, (err, template) => {
+    ejs.renderFile('./public/login.ejs', { err: info?.err, message: info?.message, theme: req.user ? req.user.preferences.theme : defaultTheme }, {}, (err, template) => {
         if (err) {
             throw err;
         } else {
@@ -248,17 +249,17 @@ app.get('/logout', (req, res) => {
 app.get('/changetheme', (req, res) => {
     users = client.db('users').collection(req.user.type)
     req.user.preferences.theme = req.query.theme
-    let {_id, ...rest} = req.user 
-    if(req.user.type === 'custom'){
-        users.updateOne({username: req.user.username}, {$set: rest})
+    let { _id, ...rest } = req.user
+    if (req.user.type === 'custom') {
+        users.updateOne({ username: req.user.username }, { $set: rest })
     } else {
-        users.updateOne({id: req.user.id}, {$set: rest})
+        users.updateOne({ id: req.user.id }, { $set: rest })
     }
     res.end()
 })
 
 app.get('/settings', (req, res) => {
-    ejs.renderFile('./protected/settings.ejs', { theme: req.user ? req.user.preferences.theme : defaultTheme}, {}, (err, template) => {
+    ejs.renderFile('./protected/settings.ejs', { theme: req.user ? req.user.preferences.theme : defaultTheme }, {}, (err, template) => {
         if (err) {
             throw err;
         } else {
@@ -267,29 +268,71 @@ app.get('/settings', (req, res) => {
     })
 })
 
+app.get('/getdata', async (req, res) => {
+    let tracks = ['Bahrain', 'Saudi Arabia', 'Australia', 'Italy(Imola)', 'United States(Miami)', 'Spain', 'Monaco', 'Azerbaijan', 'Canada', 'Great Britain', 'Austria', 'France', 'Hungary', 'Belgium', 'Netherlands', 'Italy(Monza)', 'Singapore', 'Japan', 'United States(Austin)', 'Mexico', 'Brazil', 'Abu Dhabi']
+    let endpoints = ['bahrain', 'saudi_arabia', 'australia', 'imola', 'miami', 'spain', 'monaco', 'azerbaijan', 'canada', 'silverstone', 'austria', 'france', 'hungary', 'spa', 'netherlands', 'monza', 'singapore', 'japan', 'usa', 'mexico', 'brazil', 'abudhabi']
+    let coll = client.db('data').collection('laptimes')
+    let result = await coll.find({ userId: req.user.id }).toArray()
+    result.forEach(e => {
+        data[e.track] = e
+    })
+    let trackname = tracks[endpoints.indexOf(req.query.endpoint)]
+    let lapData = data[req.query.endpoint]
+    let html = `<div class='popup container w-full h-full p-1'>
+                    <div class='text-center'>
+                    ${trackname}
+                    </div>
+                    <div class='flex mt-5'>
+                        <div id='stats' class='w-1/2 flex flex-col items-center'>
+                               <h1>
+                               Time:
+                               </h1> 
+                               <h1 id='laptime'>
+                               ${lapData? lapData.laptime: 'no laptime'}
+                               </h1>
+                            <h1>
+                                <h1>
+                                Difficulty:
+                                </h1> 
+                                <h1 id='difficulty'>
+                                ${lapData? lapData.difficulty: 'no difficulty'}
+                                </h1>
+                            </h1>
+                        </div>
+                        <form class="flex flex-col w-1/2">
+                            <input data-endpoint='${req.query.endpoint}' id="in" type="text" placeholder="1:14.123" class="lapTimeField w-full p-1 rounded-md text-neutral" pattern="[0-9]+:[0-9]+.[0-9]+">
+                            <div class="flex">
+                                <button id='popupbtn' class="btn btn-secondary btn-xs mt-5 ml-0 mr-auto">clear</button>
+                                <button id='popupbtn' class="btn btn-secondary btn-xs mt-5 ml-auto mr-0">submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>`
+    res.end(JSON.stringify({ 'html': html }))
+})
+
 app.get('/map', async (req, res) => {
     users = client.db('users').collection(req.user.type)
     req.user.preferences.list = false
-    let {_id, ...rest} = req.user 
-    if(req.user.type === 'custom'){
-        users.updateOne({username: req.user.username}, {$set: rest})
+    let { _id, ...rest } = req.user
+    if (req.user.type === 'custom') {
+        users.updateOne({ username: req.user.username }, { $set: rest })
     } else {
-        users.updateOne({id: req.user.id}, {$set: rest})
+        users.updateOne({ id: req.user.id }, { $set: rest })
     }
 
 
     let tracks = ['Bahrain', 'Saudi Arabia', 'Australia', 'Italy(Imola)', 'United States(Miami)', 'Spain', 'Monaco', 'Azerbaijan', 'Canada', 'Great Britain', 'Austria', 'France', 'Hungary', 'Belgium', 'Netherlands', 'Italy(Monza)', 'Singapore', 'Japan', 'United States(Austin)', 'Mexico', 'Brazil', 'Abu Dhabi']
     let flags = ['https://www.f1laps.com/static/icons/flags/BHR.736ec7e127a1.svg', 'https://www.f1laps.com/static/icons/flags/SAU.239857cafada.svg', 'https://www.f1laps.com/static/icons/flags/AUS.cab2eac60acd.svg', 'https://www.f1laps.com/static/icons/flags/ITA.612e617f5d72.svg', 'https://www.f1laps.com/static/icons/flags/USA.36ab476e5e55.svg', 'https://www.f1laps.com/static/icons/flags/ESP.36938bbe2779.svg', 'https://www.f1laps.com/static/icons/flags/MCO.6bb3a6ad42a9.svg', 'https://www.f1laps.com/static/icons/flags/AZE.aed905d7c8a1.svg', 'https://www.f1laps.com/static/icons/flags/CAN.ed3cd4b507f8.svg', 'https://www.f1laps.com/static/icons/flags/GBR.e5564902e264.svg', 'https://www.f1laps.com/static/icons/flags/AUT.7fc4e22077fa.svg', 'https://www.f1laps.com/static/icons/flags/FRA.968aaa24eeff.svg', 'https://www.f1laps.com/static/icons/flags/HUN.844eeb9e8fa1.svg', 'https://www.f1laps.com/static/icons/flags/BEL.49147ca6a068.svg', 'https://www.f1laps.com/static/icons/flags/NLD.f163721e679e.svg', 'https://www.f1laps.com/static/icons/flags/ITA.612e617f5d72.svg', 'https://www.f1laps.com/static/icons/flags/SGP.3d05a02d8a92.svg', 'https://www.f1laps.com/static/icons/flags/JPN.1f905d23af14.svg', 'https://www.f1laps.com/static/icons/flags/USA.36ab476e5e55.svg', 'https://www.f1laps.com/static/icons/flags/MEX.6ee1e6d4e6ac.svg', 'https://www.f1laps.com/static/icons/flags/BRA.a102e5631626.svg', 'https://www.f1laps.com/static/icons/flags/ARE.61f9f9f93387.svg', 'https://www.f1laps.com/static/icons/flags/PRT.70a47eede02a.svg', 'https://www.f1laps.com/static/icons/flags/CHN.7f8455b70734.svg']
     let endpoints = ['bahrain', 'saudi_arabia', 'australia', 'imola', 'miami', 'spain', 'monaco', 'azerbaijan', 'canada', 'silverstone', 'austria', 'france', 'hungary', 'spa', 'netherlands', 'monza', 'singapore', 'japan', 'usa', 'mexico', 'brazil', 'abudhabi']
-    let coords = [[2140,870],[2065,905],[3060,1575],[1775,675],[850,850],[1605,705],[1690,665],[2100,815],[910,635],[1635,570],[1790,610],[1660,630],[1785,590],[1830,620],[1690,560],[1800,700],[2680,1030],[2990,745],[685,800],[600,875],[1115,1240],[2170,890]]
-    let data = {}    
-    debugger
+    let coords = [[2140, 870], [2065, 905], [3060, 1575], [1775, 675], [850, 850], [1605, 705], [1690, 665], [2100, 815], [910, 635], [1635, 570], [1790, 610], [1660, 630], [1785, 590], [1830, 620], [1690, 560], [1800, 700], [2680, 1030], [2990, 745], [685, 800], [600, 875], [1115, 1240], [2170, 890]]
+    let data = {}
     let coll = client.db('data').collection('laptimes')
-    let result = await coll.find({userId: req.user.id}).toArray()
+    let result = await coll.find({ userId: req.user.id }).toArray()
     result.forEach(e => {
         data[e.track] = e
     })
-    ejs.renderFile('./protected/map.ejs', {pfp:req.user.photos?req.user.photos[0]?.value:'', coords: coords, endpoints: endpoints, theme: req.user ? req.user.preferences.theme : defaultTheme, tracks: tracks, flags: flags, data: data }, {}, (err, template) => {
+    ejs.renderFile('./protected/map.ejs', { pfp: req.user.photos ? req.user.photos[0]?.value : '', coords: coords, endpoints: endpoints, theme: req.user ? req.user.preferences.theme : defaultTheme, tracks: tracks, flags: flags, data: data }, {}, (err, template) => {
         if (err) {
             throw err;
         } else {
@@ -301,29 +344,28 @@ app.get('/map', async (req, res) => {
 app.get('/list', async (req, res) => {
     users = client.db('users').collection(req.user.type)
     req.user.preferences.list = true
-    let {_id, ...rest} = req.user 
-    if(req.user.type === 'custom'){
-        users.updateOne({username: req.user.username}, {$set: rest})
+    let { _id, ...rest } = req.user
+    if (req.user.type === 'custom') {
+        users.updateOne({ username: req.user.username }, { $set: rest })
     } else {
-        users.updateOne({id: req.user.id}, {$set: rest})
+        users.updateOne({ id: req.user.id }, { $set: rest })
     }
 
     req.user.preferences.list = true
     let tracks = ['Bahrain', 'Saudi Arabia', 'Australia', 'Italy(Imola)', 'United States(Miami)', 'Spain', 'Monaco', 'Azerbaijan', 'Canada', 'Great Britain', 'Austria', 'France', 'Hungary', 'Belgium', 'Netherlands', 'Italy(Monza)', 'Singapore', 'Japan', 'United States(Austin)', 'Mexico', 'Brazil', 'Abu Dhabi']
     let flags = ['https://www.f1laps.com/static/icons/flags/BHR.736ec7e127a1.svg', 'https://www.f1laps.com/static/icons/flags/SAU.239857cafada.svg', 'https://www.f1laps.com/static/icons/flags/AUS.cab2eac60acd.svg', 'https://www.f1laps.com/static/icons/flags/ITA.612e617f5d72.svg', 'https://www.f1laps.com/static/icons/flags/USA.36ab476e5e55.svg', 'https://www.f1laps.com/static/icons/flags/ESP.36938bbe2779.svg', 'https://www.f1laps.com/static/icons/flags/MCO.6bb3a6ad42a9.svg', 'https://www.f1laps.com/static/icons/flags/AZE.aed905d7c8a1.svg', 'https://www.f1laps.com/static/icons/flags/CAN.ed3cd4b507f8.svg', 'https://www.f1laps.com/static/icons/flags/GBR.e5564902e264.svg', 'https://www.f1laps.com/static/icons/flags/AUT.7fc4e22077fa.svg', 'https://www.f1laps.com/static/icons/flags/FRA.968aaa24eeff.svg', 'https://www.f1laps.com/static/icons/flags/HUN.844eeb9e8fa1.svg', 'https://www.f1laps.com/static/icons/flags/BEL.49147ca6a068.svg', 'https://www.f1laps.com/static/icons/flags/NLD.f163721e679e.svg', 'https://www.f1laps.com/static/icons/flags/ITA.612e617f5d72.svg', 'https://www.f1laps.com/static/icons/flags/SGP.3d05a02d8a92.svg', 'https://www.f1laps.com/static/icons/flags/JPN.1f905d23af14.svg', 'https://www.f1laps.com/static/icons/flags/USA.36ab476e5e55.svg', 'https://www.f1laps.com/static/icons/flags/MEX.6ee1e6d4e6ac.svg', 'https://www.f1laps.com/static/icons/flags/BRA.a102e5631626.svg', 'https://www.f1laps.com/static/icons/flags/ARE.61f9f9f93387.svg', 'https://www.f1laps.com/static/icons/flags/PRT.70a47eede02a.svg', 'https://www.f1laps.com/static/icons/flags/CHN.7f8455b70734.svg']
     let endpoints = ['bahrain', 'saudi_arabia', 'australia', 'imola', 'miami', 'spain', 'monaco', 'azerbaijan', 'canada', 'silverstone', 'austria', 'france', 'hungary', 'spa', 'netherlands', 'monza', 'singapore', 'japan', 'usa', 'mexico', 'brazil', 'abudhabi']
-    let data = {}    
-    debugger
+    let data = {}
     let coll = client.db('data').collection('laptimes')
-    let result = await coll.find({userId: req.user.id}).toArray()
+    let result = await coll.find({ userId: req.user.id }).toArray()
     let sum = 0
     result.forEach(e => {
         sum += parseInt(e.difficulty)
         data[e.track] = e
     })
-    let avg = sum/result.length
+    let avg = parseInt(sum / result.length)
     // console.log(data)
-    ejs.renderFile('./protected/list.ejs', {pfp:req.user.photos?req.user.photos[0]?.value:'', avg: avg,endpoints: endpoints, theme: req.user ? req.user.preferences.theme : defaultTheme, tracks: tracks, flags: flags, data: data }, {}, (err, template) => {
+    ejs.renderFile('./protected/list.ejs', { pfp: req.user.photos ? req.user.photos[0]?.value : '', avg: avg, endpoints: endpoints, theme: req.user ? req.user.preferences.theme : defaultTheme, tracks: tracks, flags: flags, data: data }, {}, (err, template) => {
         if (err) {
             throw err;
         } else {
@@ -334,9 +376,9 @@ app.get('/list', async (req, res) => {
 
 app.get('/calculator', async (req, res) => {
     let coll = client.db('data').collection('laptimes')
-    let result = await coll.findOne({userId: req.user.id, track: req.query.endpoint})
+    let result = await coll.findOne({ userId: req.user.id, track: req.query.endpoint })
 
-    ejs.renderFile('./protected/calculator.ejs', { ...req.query,difficulty: result?result.difficulty:'',laptime: result?result.laptime:'',theme: req.user ? req.user.preferences.theme : defaultTheme }, {}, (err, template) => {
+    ejs.renderFile('./protected/calculator.ejs', { ...req.query, difficulty: result ? result.difficulty : '', laptime: result ? result.laptime : '', theme: req.user ? req.user.preferences.theme : defaultTheme }, {}, (err, template) => {
         if (err) {
             throw err;
         } else {
@@ -345,8 +387,8 @@ app.get('/calculator', async (req, res) => {
     })
 })
 
-app.get('/removedifficulty', (req,res) => {
-    let coll = client.db('data').collection('laptimes').deleteOne({userId: req.user.id, track: req.query.track})
+app.get('/removedifficulty', (req, res) => {
+    let coll = client.db('data').collection('laptimes').deleteOne({ userId: req.user.id, track: req.query.track })
     res.status(202).end()
 })
 
@@ -358,11 +400,11 @@ app.get('/getdifficulty', (req, res) => {
             return difficulty
         }).then(diff => {
             let data = { track: req.query.track, laptime: req.query.laptime, difficulty: diff }
-            let coll = client.db('data').collection('laptimes').findOne({userId: req.user.id, track: req.query.track}).then(resp => {
-                if(resp){
-                    client.db('data').collection('laptimes').updateOne({userId: req.user.id, track: req.query.track}, {$set: data})
+            let coll = client.db('data').collection('laptimes').findOne({ userId: req.user.id, track: req.query.track }).then(resp => {
+                if (resp) {
+                    client.db('data').collection('laptimes').updateOne({ userId: req.user.id, track: req.query.track }, { $set: data })
                 } else {
-                    client.db('data').collection('laptimes').insertOne({...data, userId: req.user.id})
+                    client.db('data').collection('laptimes').insertOne({ ...data, userId: req.user.id })
                 }
             })
             res.json(data)

@@ -10,23 +10,23 @@
 
 <body class="flex flex-col bg-base-300 justify-center items-center w-full h-screen" id="body" data-endpoint=<%= endpoint %> >
    <a href="/list">
-       <button class="absolute top-1 left-1 btn"> back </button>
+       <button class="absolute top-1 left-1 btn btn-primary"> back </button>
    </a>
     <h1 class="text-3xl font-bold mb-5">
        <%= name %> 
    </h1>
-   <p>
+   <p id="laptime">
     <%= laptime%>
    </p>
-   <p class="mb-5">
+   <p id="difficulty" class="mb-5">
     Difficulty:
     <%= difficulty %>
    </p>
     <form class="flex flex-col">
         <input id="in" type="text" placeholder="1:14.123" class="lapTimeField p-1 rounded-md text-neutral" pattern="[0-9]+:[0-9]+.[0-9]+">
         <div class="flex">
-            <button class="btn mt-5 ml-0 mr-auto w-20">clear</button>
-            <button class="btn mt-5 ml-auto mr-0 w-20">submit</button>
+            <button class="btn btn-accent mt-5 ml-0 mr-auto w-20">clear</button>
+            <button class="btn btn-accent mt-5 ml-auto mr-0 w-20">submit</button>
         </div>
    </form>
    

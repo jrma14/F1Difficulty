@@ -1,15 +1,8 @@
-// let offsetY = -1240
-// let offsetX = -1754
-//1260,1311
-
-
 document.addEventListener("mousemove",parallax)
 
 function parallax(e){
     let maxX = (window.innerWidth - 3508)/2
     let maxY = (window.innerHeight - 2480)/2
-    // let offsetX = (window.innerWidth - 3508)/2
-    // let offsetY = (window.innerHeight - 2480)/2
     let intensityX = 2*maxX/window.innerWidth
     let intensityY = -2*maxY/window.innerHeight
     let x0 = window.innerWidth/2
@@ -34,7 +27,4 @@ function parallax(e){
     }
     document.documentElement.style.setProperty('--bg-x', transX + maxX + "px")
     document.documentElement.style.setProperty('--bg-y', transY + maxY + "px")
-    // console.log("max", maxX, maxY)
-    // console.log("trans:", transX, transY)
-    // console.log("curr:",transX + offsetX,transY + offsetY)
 }

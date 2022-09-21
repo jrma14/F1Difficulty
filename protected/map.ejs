@@ -13,187 +13,126 @@
 
 
 
-<body class="select-none bg-grey overflow-clip w-full h-screen" id="body">
+<body class="select-none bg-base-300 overflow-clip w-full h-screen" id="body">
     <header id="header" class="w-full absolute z-10">
         <%- include('header',{pfp:pfp}); %>
     </header>
     <div id="bg">
-        <img src="img/world-map-removebg.png" id="map" />
+        <!-- <img src="img/world-map-removebg.png" id="map" /> -->
+        <!-- <img src="img/world-map-removebg.svg" class="fill-primary" id="map" /> -->
+        <%- include('mapbg') %> 
+        <div class="absolute z-10">
+            <div id="popup" class="hidden absolute bg-accent w-[250px] h-[150px] rounded-lg flex items-center justify-center">
+                
+            </div>
+        </div>
         <div data-endpoint="miami"
-            class="location relative translate-x-[850px] translate-y-[850px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150 text-black cursor-pointer hover:border-2 hover:border-green">
+            class="location absolute w-5 h-5 translate-x-[850px] translate-y-[850px]  rounded-full flex items-center justify-center hover:scale-150 cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/USA.36ab476e5e55.svg" alt="flag" />
         </div>
         <div data-endpoint="bahrain"
-            class="location relative translate-x-[2125px] translate-y-[850px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150 text-black cursor-pointer hover:border-2 hover:border-green">
+            class="location absolute translate-x-[2140px] translate-y-[860px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150 text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/BHR.736ec7e127a1.svg" alt="flag" />
         </div>
         <div data-endpoint="saudi_arabia"
-            class="location relative translate-x-[2125px] translate-y-[850px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150 text-black cursor-pointer hover:border-2 hover:border-green">
+            class="location absolute translate-x-[2015px] translate-y-[910px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150 text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/SAU.239857cafada.svg" alt="flag" />
         </div>
-        <div data-endpoint="imola" id="bubble" name="Italy(Imola)" class="location relative translate-x-[1775px]
-                translate-y-[675px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
-                    text-black cursor-pointer hover:border-2 hover:border-green">
+        <div data-endpoint="imola" id="bubble" name="Italy(Imola)" class="location absolute translate-x-[1750px]
+                translate-y-[650px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
+                    text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/ITA.612e617f5d72.svg" alt="flag">
         </div>
-        <div data-endpoint="australia" id="bubble" name="Australia" class="location relative translate-x-[3060px]
-                translate-y-[1575px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
-                    text-black cursor-pointer hover:border-2 hover:border-green">
+        <div data-endpoint="australia" id="bubble" name="Australia" class="location absolute translate-x-[3050px]
+                translate-y-[1580px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
+                    text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/AUS.cab2eac60acd.svg" alt="flag">
         </div>
-        <div data-endpoint="spain" id="bubble" name="Spain" class="location relative translate-x-[1605px]
-                translate-y-[705px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
-                    text-black cursor-pointer hover:border-2 hover:border-green">
+        <div data-endpoint="spain" id="bubble" name="Spain" class="location absolute translate-x-[1650px]
+                translate-y-[680px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
+                    text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/ESP.36938bbe2779.svg" alt="flag">
         </div>
-        <div data-endpoint="monaco" id="bubble" name="Monaco" class="location relative translate-x-[1690px]
-                translate-y-[665px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
-                    text-black cursor-pointer hover:border-2 hover:border-green">
+        <div data-endpoint="monaco" id="bubble" name="Monaco" class="location absolute translate-x-[1700px]
+                translate-y-[660px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
+                    text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/MCO.6bb3a6ad42a9.svg" alt="flag">
         </div>
-        <div data-endpoint="azerbaijan" id="bubble" name="Azerbaijan" class="location relative translate-x-[2100px]
-    translate-y-[815px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
-        text-black cursor-pointer hover:border-2 hover:border-green">
+        <div data-endpoint="azerbaijan" id="bubble" name="Azerbaijan" class="location absolute translate-x-[2115px]
+    translate-y-[700px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
+        text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/AZE.aed905d7c8a1.svg" alt="flag">
         </div>
-        <div data-endpoint="canada" id="bubble" name="Canada" class="location relative translate-x-[910px]
-                translate-y-[635px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
-                    text-black cursor-pointer hover:border-2 hover:border-green">
+        <div data-endpoint="canada" id="bubble" name="Canada" class="location absolute translate-x-[910px]
+                translate-y-[630px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
+                    text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/CAN.ed3cd4b507f8.svg" alt="flag">
         </div>
-        <div data-endpoint="silverstone" id="bubble" name="Great Britain" class="location relative translate-x-[1635px]
-    translate-y-[570px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
-        text-black cursor-pointer hover:border-2 hover:border-green">
+        <div data-endpoint="silverstone" id="bubble" name="Great Britain" class="location absolute translate-x-[1615px]
+    translate-y-[560px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
+        text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/GBR.e5564902e264.svg" alt="flag">
         </div>
-        <div data-endpoint="austria" id="bubble" name="Austria" class="location relative translate-x-[1790px]
+        <div data-endpoint="austria" id="bubble" name="Austria" class="location absolute translate-x-[1775px]
                 translate-y-[610px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
-                    text-black cursor-pointer hover:border-2 hover:border-green">
+                    text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/AUT.7fc4e22077fa.svg" alt="flag">
         </div>
-        <div data-endpoint="france" id="bubble" name="France" class="location relative translate-x-[1660px]
-    translate-y-[630px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
-        text-black cursor-pointer hover:border-2 hover:border-green">
+        <div data-endpoint="france" id="bubble" name="France" class="location absolute translate-x-[1670px]
+    translate-y-[660px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
+        text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/FRA.968aaa24eeff.svg" alt="flag">
         </div>
-        <div data-endpoint="hungary" id="bubble" name="Hungary" class="location relative translate-x-[1785px]
-                translate-y-[590px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
-                    text-black cursor-pointer hover:border-2 hover:border-green">
+        <div data-endpoint="hungary" id="bubble" name="Hungary" class="location absolute translate-x-[1815px]
+                translate-y-[610px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
+                    text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/HUN.844eeb9e8fa1.svg" alt="flag">
         </div>
-        <div data-endpoint="spa" id="bubble" name="Belgium" class="location relative translate-x-[1830px]
-    translate-y-[620px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
-        text-black cursor-pointer hover:border-2 hover:border-green">
+        <div data-endpoint="spa" id="bubble" name="Belgium" class="location absolute translate-x-[1685px]
+    translate-y-[580px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
+        text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/BEL.49147ca6a068.svg" alt="flag">
         </div>
-        <div data-endpoint="netherlands" id="bubble" name="Netherlands" class="location relative translate-x-[1690px]
+        <div data-endpoint="netherlands" id="bubble" name="Netherlands" class="location absolute translate-x-[1675px]
                 translate-y-[560px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
-                    text-black cursor-pointer hover:border-2 hover:border-green">
+                    text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/NLD.f163721e679e.svg" alt="flag">
         </div>
-        <div data-endpoint="monza" id="bubble" name="Italy(Monza)" class="location relative translate-x-[1800px]
-    translate-y-[700px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
-        text-black cursor-pointer hover:border-2 hover:border-green">
+        <div data-endpoint="monza" id="bubble" name="Italy(Monza)" class="location absolute translate-x-[1730px]
+    translate-y-[630px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
+        text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/ITA.612e617f5d72.svg" alt="flag">
         </div>
-        <div data-endpoint="singapore" id="bubble" name="Singapore" class="location relative translate-x-[2680px]
-                translate-y-[1030px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
-                    text-black cursor-pointer hover:border-2 hover:border-green">
+        <div data-endpoint="singapore" id="bubble" name="Singapore" class="location absolute translate-x-[2650px]
+                translate-y-[1130px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
+                    text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/SGP.3d05a02d8a92.svg" alt="flag">
         </div>
-        <div data-endpoint="japan" id="bubble" name="Japan" class="location relative translate-x-[2990px]
-                translate-y-[745px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
-                    text-black cursor-pointer hover:border-2 hover:border-green">
+        <div data-endpoint="japan" id="bubble" name="Japan" class="location absolute translate-x-[2970px]
+                translate-y-[750px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
+                    text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/JPN.1f905d23af14.svg" alt="flag">
         </div>
-        <div data-endpoint="usa" id="bubble" name="United States(Austin)" class="location relative translate-x-[685px]
-                translate-y-[800px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
-                    text-black cursor-pointer hover:border-2 hover:border-green">
+        <div data-endpoint="usa" id="bubble" name="United States(Austin)" class="location absolute translate-x-[670px]
+                translate-y-[820px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
+                    text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/USA.36ab476e5e55.svg" alt="flag">
         </div>
-        <div data-endpoint="mexico" id="bubble" name="Mexico" class="location relative translate-x-[600px]
-                translate-y-[875px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
-                    text-black cursor-pointer hover:border-2 hover:border-green">
+        <div data-endpoint="mexico" id="bubble" name="Mexico" class="location absolute translate-x-[650px]
+                translate-y-[920px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
+                    text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/MEX.6ee1e6d4e6ac.svg" alt="flag">
         </div>
-        <div data-endpoint="brazil" id="bubble" name="Brazil" class="location relative translate-x-[1115px]
-    translate-y-[1240px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
-        text-black cursor-pointer hover:border-2 hover:border-green">
+        <div data-endpoint="brazil" id="bubble" name="Brazil" class="location absolute translate-x-[1170px]
+    translate-y-[1415px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
+        text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/BRA.a102e5631626.svg" alt="flag">
         </div>
-        <div data-endpoint="abudhabi" id="bubble" name="Abu Dhabi" class="location relative translate-x-[2170px]
-                translate-y-[890px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
-                    text-black cursor-pointer hover:border-2 hover:border-green">
+        <div data-endpoint="abudhabi" id="bubble" name="Abu Dhabi" class="location absolute translate-x-[2170px]
+                translate-y-[870px] bg-base w-5 h-5 rounded-full flex items-center justify-center hover:scale-150
+                    text-black cursor-pointer hover:border-2 hover:border-primary">
             <img src="https://www.f1laps.com/static/icons/flags/ARE.61f9f9f93387.svg" alt="flag">
         </div>
-
-        <div id="miamipopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="saudi_arabiapopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="bahrainpopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="imolapopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="mexicopopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="usapopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="brazilpopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="canadapopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="monzapopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="silverstonepopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="francepopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="monacopopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="netherlandspopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="spainpopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="spapopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="hungarypopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="austriapopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="azerbaijanpopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="abudhabipopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="singaporepopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="japanpopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-        <div id="australiapopup" class="hidden popup relative translate-x-[870px] translate-y-[300px] bg-accent w-28 h-28 rounded-lg flex items-center justify-center">
-        
-        </div>
-
     </div>
 </body>
 

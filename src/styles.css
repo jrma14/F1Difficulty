@@ -20,7 +20,6 @@
 
 #map {
     max-width: none;
-    filter: invert(100%);
     z-index: -1;
     position: absolute;
 }
