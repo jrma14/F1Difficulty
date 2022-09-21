@@ -20,6 +20,7 @@ const express = require('express'),
 dotenv.config()
 const uri = `mongodb+srv://${process.env.USER}:${process.env.PASS}@f1difficultycalculator.g24tehi.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+const defaultTheme = 'dracula'
 
 // app.set('view engine','ejs')
 
@@ -78,7 +79,7 @@ passport.use(new GoogleStrategy({
                 user = res
                 return cb(null, res)
             } else {
-                defPref = { list: false, theme: 'light' }
+                defPref = { list: false, theme: defaultTheme }
                 user = { ...profile, preferences: defPref, type: 'google' }
                 coll.insertOne(user)
                 return cb(null, user)
@@ -99,7 +100,7 @@ passport.use(new GitHubStrategy({
                 user = res
                 return cb(null, res)
             } else {
-                defPref = { list: false, theme: 'light' }
+                defPref = { list: false, theme: defaultTheme }
                 user = { ...profile, preferences: defPref, type: 'github' }
                 coll.insertOne(user)
                 return cb(null, user)
@@ -158,7 +159,7 @@ passport.use('create', new LocalStrategy({
                     let enc = AES.encrypt(sha, process.env.AES).toString()
                     // console.log('sha:', sha)
                     // console.log('enc',AES.decrypt(enc,process.env.AES).toString(CryptoJS.enc.Utf8))
-                    defPref = { list: false, theme: 'light' }
+                    defPref = { list: false, theme: defaultTheme }
                     let user = { username: req.body.username, password: enc, preferences: defPref, type: 'custom' }
                     coll.insertOne(user)
                     return done(null, user)
@@ -173,7 +174,7 @@ app.post('/create', function (req, res, next) {
         successRedirect: '/',
     }, function (err, user, info) {
         if (!user) {
-            ejs.renderFile('./public/create.ejs', { theme: req.user ? req.user.preferences.theme : 'light', err: info.err, message: info.message }, {}, (err, template) => {
+            ejs.renderFile('./public/create.ejs', { theme: req.user ? req.user.preferences.theme : defaultTheme, err: info.err, message: info.message }, {}, (err, template) => {
                 if (err) {
                     throw err;
                 } else {
@@ -214,7 +215,7 @@ app.get('/', (req, res, next) => {
 
 
 app.get('/create', (req, res) => {
-    ejs.renderFile('./public/create.ejs', { theme: req.user ? req.user.preferences.theme : 'light', err: 'none', message: 'none' }, {}, (err, template) => {
+    ejs.renderFile('./public/create.ejs', { theme: req.user ? req.user.preferences.theme : defaultTheme, err: 'none', message: 'none' }, {}, (err, template) => {
         if (err) {
             throw err;
         } else {
@@ -228,7 +229,7 @@ app.get('/login', (req, res) => {
     if (info && !info.err) {
         info.err = 'missing'
     }
-    ejs.renderFile('./public/login.ejs',  {err: info?.err, message: info?.message, theme: req.user ? req.user.preferences.theme : 'light' }, {}, (err, template) => {
+    ejs.renderFile('./public/login.ejs',  {err: info?.err, message: info?.message, theme: req.user ? req.user.preferences.theme : defaultTheme }, {}, (err, template) => {
         if (err) {
             throw err;
         } else {
@@ -257,7 +258,7 @@ app.get('/changetheme', (req, res) => {
 })
 
 app.get('/settings', (req, res) => {
-    ejs.renderFile('./protected/settings.ejs', { theme: req.user ? req.user.preferences.theme : 'light'}, {}, (err, template) => {
+    ejs.renderFile('./protected/settings.ejs', { theme: req.user ? req.user.preferences.theme : defaultTheme}, {}, (err, template) => {
         if (err) {
             throw err;
         } else {
@@ -288,7 +289,7 @@ app.get('/map', async (req, res) => {
     result.forEach(e => {
         data[e.track] = e
     })
-    ejs.renderFile('./protected/map.ejs', {pfp:req.user.photos?req.user.photos[0]?.value:'', coords: coords, endpoints: endpoints, theme: req.user ? req.user.preferences.theme : 'light', tracks: tracks, flags: flags, data: data }, {}, (err, template) => {
+    ejs.renderFile('./protected/map.ejs', {pfp:req.user.photos?req.user.photos[0]?.value:'', coords: coords, endpoints: endpoints, theme: req.user ? req.user.preferences.theme : defaultTheme, tracks: tracks, flags: flags, data: data }, {}, (err, template) => {
         if (err) {
             throw err;
         } else {
@@ -322,7 +323,7 @@ app.get('/list', async (req, res) => {
     })
     let avg = sum/result.length
     // console.log(data)
-    ejs.renderFile('./protected/list.ejs', {pfp:req.user.photos?req.user.photos[0]?.value:'', avg: avg,endpoints: endpoints, theme: req.user ? req.user.preferences.theme : 'light', tracks: tracks, flags: flags, data: data }, {}, (err, template) => {
+    ejs.renderFile('./protected/list.ejs', {pfp:req.user.photos?req.user.photos[0]?.value:'', avg: avg,endpoints: endpoints, theme: req.user ? req.user.preferences.theme : defaultTheme, tracks: tracks, flags: flags, data: data }, {}, (err, template) => {
         if (err) {
             throw err;
         } else {
@@ -335,7 +336,7 @@ app.get('/calculator', async (req, res) => {
     let coll = client.db('data').collection('laptimes')
     let result = await coll.findOne({userId: req.user.id, track: req.query.endpoint})
 
-    ejs.renderFile('./protected/calculator.ejs', { ...req.query,difficulty: result?result.difficulty:'',laptime: result?result.laptime:'',theme: req.user ? req.user.preferences.theme : 'light' }, {}, (err, template) => {
+    ejs.renderFile('./protected/calculator.ejs', { ...req.query,difficulty: result?result.difficulty:'',laptime: result?result.laptime:'',theme: req.user ? req.user.preferences.theme : defaultTheme }, {}, (err, template) => {
         if (err) {
             throw err;
         } else {
