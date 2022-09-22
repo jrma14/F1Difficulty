@@ -2829,9 +2829,6 @@ html {
 .w-\[36px\] {
   width: 36px;
 }
-.min-w-\[700px\] {
-  min-width: 700px;
-}
 .min-w-\[910px\] {
   min-width: 910px;
 }
@@ -3128,6 +3125,10 @@ html {
 .text-error {
   --tw-text-opacity: 1;
   color: hsl(var(--er) / var(--tw-text-opacity));
+}
+.text-accent-content {
+  --tw-text-opacity: 1;
+  color: hsl(var(--ac) / var(--tw-text-opacity));
 }
 .invert {
   --tw-invert: invert(100%);

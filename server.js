@@ -16,24 +16,15 @@ const express = require('express'),
     GitHubStrategy = require('passport-github2'),
     LocalStrategy = require('passport-local'),
     path = require('path'),
-    { MongoClient, ServerApiVersion } = require('mongodb'),
+    { MongoClient, ServerApiVersion, ObjectId } = require('mongodb'),
     ejs = require('ejs')
 dotenv.config()
 const uri = `mongodb+srv://${process.env.USER}:${process.env.PASS}@f1difficultycalculator.g24tehi.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 const defaultTheme = 'dracula'
 
-// app.set('view engine','ejs')
 
-app.use((req, res, next) => {
-    // if(req.url == "/"){
-    // console.log(req.method)
-    // console.log(req.url)
-    //     console.log(req.user)
-    // }
-    next()
-})
-// app.use(require('cookie-parser')());//might not be working because express-session automatically parses cookies
+// app.use(require('cookie-parser')());//express-session automatically parses cookies
 app.use(favicon(path.join(__dirname, 'public', 'img', 'favicon.ico')))// just caches it
 app.use(require('body-parser').urlencoded({ extended: true }));
 app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));//automatically parses cookies
@@ -161,7 +152,7 @@ passport.use('create', new LocalStrategy({
                     // console.log('sha:', sha)
                     // console.log('enc',AES.decrypt(enc,process.env.AES).toString(CryptoJS.enc.Utf8))
                     defPref = { list: false, theme: defaultTheme }
-                    let user = { username: req.body.username, password: enc, preferences: defPref, type: 'custom' }
+                    let user = { username: req.body.username, password: enc, preferences: defPref, type: 'custom', id: ObjectId() }
                     coll.insertOne(user)
                     return done(null, user)
                 }
@@ -250,11 +241,7 @@ app.get('/changetheme', (req, res) => {
     users = client.db('users').collection(req.user.type)
     req.user.preferences.theme = req.query.theme
     let { _id, ...rest } = req.user
-    if (req.user.type === 'custom') {
-        users.updateOne({ username: req.user.username }, { $set: rest })
-    } else {
-        users.updateOne({ id: req.user.id }, { $set: rest })
-    }
+    users.updateOne({ id: req.user.id }, { $set: rest })
     res.end()
 })
 
@@ -278,7 +265,7 @@ app.get('/getdata', async (req, res) => {
     })
     let trackname = tracks[endpoints.indexOf(req.query.endpoint)]
     let lapData = data[req.query.endpoint]
-    let html = `<div class='popup container w-full h-full p-1'>
+    let html = `<div class='popup container w-full h-full p-1 text-accent-content'>
                     <div class='text-center'>
                     ${trackname}
                     </div>
@@ -315,11 +302,7 @@ app.get('/map', async (req, res) => {
     users = client.db('users').collection(req.user.type)
     req.user.preferences.list = false
     let { _id, ...rest } = req.user
-    if (req.user.type === 'custom') {
-        users.updateOne({ username: req.user.username }, { $set: rest })
-    } else {
-        users.updateOne({ id: req.user.id }, { $set: rest })
-    }
+    users.updateOne({ id: req.user.id }, { $set: rest })
 
 
     let tracks = ['Bahrain', 'Saudi Arabia', 'Australia', 'Italy(Imola)', 'United States(Miami)', 'Spain', 'Monaco', 'Azerbaijan', 'Canada', 'Great Britain', 'Austria', 'France', 'Hungary', 'Belgium', 'Netherlands', 'Italy(Monza)', 'Singapore', 'Japan', 'United States(Austin)', 'Mexico', 'Brazil', 'Abu Dhabi']
@@ -345,11 +328,7 @@ app.get('/list', async (req, res) => {
     users = client.db('users').collection(req.user.type)
     req.user.preferences.list = true
     let { _id, ...rest } = req.user
-    if (req.user.type === 'custom') {
-        users.updateOne({ username: req.user.username }, { $set: rest })
-    } else {
-        users.updateOne({ id: req.user.id }, { $set: rest })
-    }
+    users.updateOne({ id: req.user.id }, { $set: rest })
 
     req.user.preferences.list = true
     let tracks = ['Bahrain', 'Saudi Arabia', 'Australia', 'Italy(Imola)', 'United States(Miami)', 'Spain', 'Monaco', 'Azerbaijan', 'Canada', 'Great Britain', 'Austria', 'France', 'Hungary', 'Belgium', 'Netherlands', 'Italy(Monza)', 'Singapore', 'Japan', 'United States(Austin)', 'Mexico', 'Brazil', 'Abu Dhabi']
