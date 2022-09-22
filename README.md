@@ -19,4 +19,4 @@ Middleware: For middleware, I used serve-favicon to cache the favicon, body-pars
 Technical Achievements
 OAuth: I used OAuth authentication via the GitHub strategy, Google, and my own custom one (Local Strategy)
 Heroku: I am hosting my app on Heroku
-Lighthouse: My login page gets all 100s, as for the rest I didn't bother, so probably not.
+Lighthouse: My login page gets all 100s, as for the rest I didn't bother, so probably not
