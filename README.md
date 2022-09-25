@@ -1,8 +1,6 @@
 F1 Difficulty Calculator
 https://f1-difficulty-calculator.herokuapp.com
 
-Include a very brief summary of your project here. Images are encouraged, along with concise, high-level text. Be sure to include:
-
 Goal: This application allows a user to input a laptime that they have set in a time trial in the F1 22 Game at a given circuit and it will display and save the ai difficulty associated with that laptime. This is to help users understand what ai difficulty they should be playing at. The average across all circuits is also shown and there is no difference between the map and list page, just preference.
 
 Challenges: I faced many challenges throughout the creation of this app. The largest and continous challenge was passing data between different pages and languages. Passing data from the server, to js, to ejs, to css. This proved very challenging, and to be honest, a bit janky at some points, but it works. Some other challenges were the map page, and getting authentication the first time, the rest were easy.
