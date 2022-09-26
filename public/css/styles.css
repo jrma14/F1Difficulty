@@ -3106,6 +3106,10 @@ html {
 .font-bold {
   font-weight: 700;
 }
+.text-accent-content {
+  --tw-text-opacity: 1;
+  color: hsl(var(--ac) / var(--tw-text-opacity));
+}
 .text-neutral {
   --tw-text-opacity: 1;
   color: hsl(var(--n) / var(--tw-text-opacity));
@@ -3125,10 +3129,6 @@ html {
 .text-error {
   --tw-text-opacity: 1;
   color: hsl(var(--er) / var(--tw-text-opacity));
-}
-.text-accent-content {
-  --tw-text-opacity: 1;
-  color: hsl(var(--ac) / var(--tw-text-opacity));
 }
 .invert {
   --tw-invert: invert(100%);

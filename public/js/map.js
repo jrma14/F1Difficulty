@@ -15,7 +15,7 @@ window.onload = () => {
             popup.classList.remove('hidden')
             let coords = window.getComputedStyle(e.target.closest('.location')).transform
             let arr = coords.replace('matrix(', '').replace(')', '').split(',')
-            let finalCoords = `matrix(${arr[0]},${arr[1]},${arr[2]},${arr[3]},${parseInt(arr[4]) + 50},${parseInt(arr[5]) - 142})`
+            let finalCoords = `matrix(${arr[0]},${arr[1]},${arr[2]},${arr[3]},${parseInt(arr[4]) + 80},${parseInt(arr[5]) - 185})`
             popup.style.transform = finalCoords
             let data = fetch(`/getdata?endpoint=${e.target.closest('.location').getAttribute('data-endpoint')}`).then(res => res.json()).then(data => {
                 popup.innerHTML = data.html
