@@ -2742,6 +2742,9 @@ html {
 .mb-0 {
   margin-bottom: 0px;
 }
+.mb-auto {
+  margin-bottom: auto;
+}
 .flex {
   display: flex;
 }
@@ -3033,8 +3036,14 @@ html {
 .self-center {
   align-self: center;
 }
+.justify-self-start {
+  justify-self: start;
+}
 .justify-self-end {
   justify-self: end;
+}
+.justify-self-center {
+  justify-self: center;
 }
 .overflow-clip {
   overflow: clip;
