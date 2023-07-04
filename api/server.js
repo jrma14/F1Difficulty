@@ -275,14 +275,14 @@ app.get('/getdata', async (req, res) => {
                                Time:
                                </h1> 
                                <h1 id='laptime'>
-                               ${lapData? lapData.laptime: 'no laptime'}
+                               ${lapData ? lapData.laptime : 'no laptime'}
                                </h1>
                             <h1>
                                 <h1>
                                 Difficulty:
                                 </h1> 
                                 <h1 id='difficulty'>
-                                ${lapData? lapData.difficulty: 'no difficulty'}
+                                ${lapData ? lapData.difficulty : 'no difficulty'}
                                 </h1>
                             </h1>
                         </div>
@@ -390,4 +390,4 @@ app.get('/getdifficulty', (req, res) => {
         })
 })
 
-app.listen(process.env.PORT || 3000)
+module.exports = app
