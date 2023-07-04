@@ -4,5 +4,11 @@
             "src": ".",
             "dest": "api/server.js"
         }
+    ],
+    "redirects": [
+        {
+            "src": ".",
+            "dest": "api/server.js"
+        }
     ]
 }

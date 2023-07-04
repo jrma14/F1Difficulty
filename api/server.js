@@ -26,7 +26,7 @@ const defaultTheme = 'dracula'
 // app.use(require('cookie-parser')());//express-session automatically parses cookies
 app.use(favicon(path.join(__dirname, '../', 'public', 'img', 'favicon.ico')))// just caches it
 app.use(require('body-parser').urlencoded({ extended: true }));
-app.use(require('cookie-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));//automatically parses cookies
+app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));//automatically parses cookies
 app.use(express.static(path.join(__dirname, '../', 'public'), { index: false, extensions: ['html'] }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -390,4 +390,5 @@ app.get('/getdifficulty', (req, res) => {
         })
 })
 
-module.exports = app
+// module.exports = app
+app.listen(3000)
