@@ -7,8 +7,8 @@
     ],
     "redirects": [
         {
-            "src": ".",
-            "dest": "api/server.js"
+            "source": ".",
+            "destination": "api/server.js"
         }
     ]
 }
