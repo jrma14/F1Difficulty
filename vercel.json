@@ -1,13 +1,7 @@
 {
-    "routes": [
-        {
-            "src": ".",
-            "dest": "api/server.js"
-        }
-    ],
     "redirects": [
         {
-            "source": ".",
+            "source": ".*",
             "destination": "api/server.js"
         }
     ]
