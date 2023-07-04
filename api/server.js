@@ -22,7 +22,7 @@ dotenv.config()
 const uri = `mongodb+srv://${process.env.USER}:${process.env.PASS}@f1difficultycalculator.g24tehi.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 const defaultTheme = 'dracula'
-
+console.log('Server Started!')
 
 // app.use(require('cookie-parser')());//express-session automatically parses cookies
 app.use(favicon(path.join(__dirname, '../', 'public', 'img', 'favicon.ico')))// just caches it
@@ -32,6 +32,7 @@ app.use(express.static(path.join(__dirname, '../', 'public'), { index: false, ex
 app.use(passport.initialize());
 app.use(passport.session());
 app.use((req, res, next) => {
+    console.log('Request Received')
     if (!req.url.includes('/login') && !req.url.includes('/create')) {
         if (req.user) {
             next()
