@@ -32,7 +32,7 @@ app.use(express.static(path.join(__dirname, '../', 'public'), { index: false, ex
 app.use(passport.initialize());
 app.use(passport.session());
 app.use((req, res, next) => {
-    console.log('Request Received')
+    console.log(req)
     if (!req.url.includes('/login') && !req.url.includes('/create')) {
         if (req.user) {
             next()
