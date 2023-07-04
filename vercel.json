@@ -1,5 +1,7 @@
 {
     "functions": {
-        "server.js": {}
+        "server.js": {
+            "maxDuration": 10
+        }
     }
 }
