@@ -1,0 +1,7 @@
+{
+    "functions": {
+        "server": {
+            "handler": "server.js"
+        }
+    }
+}
